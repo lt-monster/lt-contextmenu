@@ -16,7 +16,8 @@ $ npm i -S lt-contextmenu # yarn add lt-contextmenu # pnpm add lt-contextmenu
 ## 🎃 使用
 ```html
 <script setup lang="ts">
-import { LtContextmenu, type MenuGroupOption, type MenuOption, type MenuValue } from 'lt-contextmenu';
+import 'lt-contextmenu/dist/style.css'
+import { LtContextmenu, type MenuGroupOption, type MenuOption, type MenuValue } from 'lt-contextmenu'
 
 const ltContextmenu = ref()
 
