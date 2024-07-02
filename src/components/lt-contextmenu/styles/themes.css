@@ -1,0 +1,24 @@
+.menu-container[menuTheme=light] {
+  --menu-container-bg-color: white;
+  --menu-container-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
+  --menu-text-color: #606266;
+  --menu-group-border-color: rgba(126, 173, 251, 0.4);
+  --menu-item-bg-color-hover: #f2f2f2;
+  --menu-item-more-color: #606266;
+}
+
+.menu-container[menuTheme=dark-element] {
+  --menu-container-bg-color: rgb(84, 92, 100);
+  --menu-container-shadow: rgba(0, 0, 0, 0.72) 0px 0px 12px 0px;
+  --menu-text-color: #e5eaf3;
+  --menu-group-border-color: rgba(144, 147, 153, 0.6);
+  --menu-item-bg-color-hover: rgb(67, 74, 80);
+}
+
+.menu-container[menuTheme=dark-naive] {
+  --menu-container-bg-color: rgb(72, 72, 78);
+  --menu-container-shadow: rgba(0, 0, 0, 0.72) 0px 0px 12px 0px;
+  --menu-text-color: #e5eaf3;
+  --menu-group-border-color: rgba(144, 147, 153, 0.6);
+  --menu-item-bg-color-hover: rgb(89,89,94);
+}

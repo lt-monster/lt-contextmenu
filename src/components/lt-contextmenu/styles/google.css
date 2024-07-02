@@ -1,0 +1,26 @@
+.menu-container[menuSize=small]{
+    --menu-container-fontsize: 12px;
+    --menu-container-children-top: -8px;
+    --menu-group-padding: 8px 0;
+    --menu-item-padding: 0 16px;
+    --menu-item-height: 2.5em;
+    --menu-item-label-padding: 0 16px 0 8px;
+}
+
+.menu-container[menuSize=normal]{
+    --menu-container-fontsize: 14px;
+    --menu-container-children-top: -12px;
+    --menu-group-padding: 12px 0;
+    --menu-item-padding: 0 16px;
+    --menu-item-height: 2.5em;
+    --menu-item-label-padding: 0 24px 0 8px;
+}
+
+.menu-container[menuSize=large]{
+    --menu-container-fontsize: 16px;
+    --menu-container-children-top: -16px;
+    --menu-group-padding: 16px 0;
+    --menu-item-padding: 0 24px;
+    --menu-item-height: 2.5em;
+    --menu-item-label-padding: 0 24px 0 12px;
+}

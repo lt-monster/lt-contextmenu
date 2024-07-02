@@ -1,0 +1,160 @@
+<script setup lang="ts">
+import { convertMenuGroupOption } from './lt-contextmenu'
+import type { MenuCacheMap, MenuGroupOption, MenuProps, MenuValue } from './types/lt-contextmenu'
+import LtContextmenuItem from './LtContextmenuItem.vue'
+import { computed, nextTick, ref, watchEffect, type CSSProperties } from 'vue';
+
+const menuVisible = ref(false)
+const menuRef = ref()
+
+const props = withDefaults(defineProps<MenuProps>(), {
+    menuStyle: 'google',
+    menuTheme: 'light',
+    menuSize: 'small'
+})
+
+const menuOptions = computed(() => convertMenuGroupOption(props.menuOptions))
+
+const menuValueMap = new Map<string | number, MenuCacheMap>()
+menuOptions.value.forEach(g => menuValueToMapCache(g))
+provide('menuValueMap', menuValueMap)
+
+const menuParam = ref()
+
+const groupClass = computed(() => {
+    if (props.groupClass) {
+        if (typeof props.groupClass === 'function') {
+            return 'menu-group ' + props.groupClass(menuParam)
+        }
+        return 'menu-group ' + props.groupClass
+    }
+    return 'menu-group'
+})
+
+const groupStyle = computed<CSSProperties>(() => {
+    if (props.groupStyle) {
+        if (typeof props.groupStyle === 'function') {
+            return props.groupStyle(menuParam)
+        }
+        return props.groupStyle
+    }
+    return {}
+})
+
+function menuValueToMapCache(group?: MenuGroupOption) {
+    group?.options.forEach(option => {
+        menuValueMap.set(option.id, {
+            option,
+            value: option.value
+        })
+        if (option.children && option.children.length > 0) {
+            const newGroup = convertMenuGroupOption(option.children)
+            newGroup.forEach(ng => menuValueToMapCache(ng))
+        }
+
+    })
+}
+
+function open(event: MouseEvent, param?: any) {
+    event.preventDefault()
+    menuParam.value = param
+    menuVisible.value = true
+    nextTick(() => {
+        if (props.width) {
+            let width = props.width
+            if (Number.isInteger(props.width)) {
+                width = props.width + 'px'
+            }
+            menuRef.value.style.width = width
+        }
+        if (props.maxWidth) {
+            let maxWidth = props.maxWidth
+            if (Number.isInteger(props.maxWidth)) {
+                maxWidth = props.maxWidth + 'px'
+            }
+            menuRef.value.style.maxWidth = maxWidth
+        }
+
+        const rect = menuRef.value.getBoundingClientRect() as DOMRect
+        if (event.clientY + rect.height > window.innerHeight) {
+            menuRef.value.style.top = (event.clientY - rect.height > 0 ? event.clientY - rect.height : 0) + 'px'
+        } else {
+            menuRef.value.style.top = event.clientY + 'px'
+        }
+
+        if (event.clientX + rect.width > window.innerWidth) {
+            menuRef.value.style.left = (event.clientX - rect.width) + 'px'
+        } else {
+            menuRef.value.style.left = event.clientX + 'px'
+        }
+    })
+}
+
+function close() {
+    menuVisible.value = false
+}
+
+watchEffect((onInvalidate) => {
+    document.addEventListener('click', close, true)
+    document.addEventListener('contextmenu', close, true)
+    onInvalidate(() => {
+        document.removeEventListener('click', close, true)
+        document.removeEventListener('contextmenu', close, true)
+    });
+})
+
+defineExpose({
+    open,
+    close,
+    getMenuOption: (id: string | number) => menuValueMap.get(id)?.option,
+    setRadioValue: (id: string | number, value?: MenuValue) => {
+        const mvm = menuValueMap.get(id)
+        if (mvm) {
+            mvm.value = value
+        }
+    },
+    getRadioValue: (id: string | number) => menuValueMap.get(id)?.value
+})
+
+</script>
+
+<template>
+    <Teleport to="body">
+        <div ref="menuRef" v-if="menuVisible && menuOptions.length > 0" class="menu-container" :menuStyle="menuStyle"
+            :menuTheme="menuTheme" :menuSize="menuSize">
+            <slot name="header" :menuParam="menuParam"></slot>
+            <div :class="groupClass" :style="groupStyle" v-for="groupOption in menuOptions" :key="groupOption.group">
+                <template v-for="option in groupOption.options" :key="option.label">
+                    <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
+                        :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
+                        :item-style="props.itemStyle" />
+                </template>
+            </div>
+            <slot name="footer" :menuParam="menuParam"></slot>
+        </div>
+    </Teleport>
+</template>
+
+<style scoped>
+@import './styles/themes.css';
+@import './styles/google.css';
+@import './styles/edge.css';
+
+.menu-container {
+    position: fixed;
+    z-index: 9999;
+    border-radius: 8px;
+    box-shadow: var(--menu-container-shadow);
+    color: var(--menu-text-color);
+    font-size: var(--menu-container-fontsize);
+    background-color: var(--menu-container-bg-color);
+}
+
+.menu-group {
+    padding: var(--menu-group-padding);
+}
+
+.menu-group~.menu-group {
+    border-top: 1px solid var(--menu-group-border-color);
+}
+</style>

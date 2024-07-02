@@ -1,0 +1,34 @@
+.menu-container[menuStyle=edge][menuSize=small]{
+    --menu-container-fontsize: 12px;
+    --menu-container-children-top: -4px;
+    --menu-group-padding: 4px;
+    --menu-item-padding: 0 16px;
+    --menu-item-height: 2em;
+    --menu-item-label-padding: 0 16px 0 8px;
+}
+
+.menu-container[menuStyle=edge][menuSize=normal]{
+    --menu-container-fontsize: 14px;
+    --menu-container-children-top: -4px;
+    --menu-group-padding: 4px;
+    --menu-item-padding: 0 16px;
+    --menu-item-height: 2em;
+    --menu-item-label-padding: 0 24px 0 8px;
+}
+
+.menu-container[menuStyle=edge][menuSize=large]{
+    --menu-container-fontsize: 16px;
+    --menu-container-children-top: -4px;
+    --menu-group-padding: 4px;
+    --menu-item-padding: 0 16px;
+    --menu-item-height: 2em;
+    --menu-item-label-padding: 0 24px 0 8px;
+}
+
+.menu-container[menuStyle=edge][menutheme=light]{
+    --menu-container-bg-color: rgb(250,250,250);
+    --menu-text-color: rgb(10,10,10);
+    --menu-group-border-color: rgb(234,234,234);
+    --menu-item-more-color: rgb(94,94,95);
+    --menu-item-bg-color-hover: rgb(211,223,233);
+}
