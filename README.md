@@ -2,6 +2,7 @@
 # lt-contextmenu
 
 一款vue3开发的右键菜单组件
+
 [![Nuget](https://img.shields.io/badge/version-1.2.0-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
 
 ## 🚀 安装
