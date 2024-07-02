@@ -12,7 +12,7 @@
   "type": "module",
   "main": "dist/lt-contextmenu.es.js",
   "types": "src/index.ts",
-  "homepage": "",
+  "homepage": "https://github.com/lt-monster/lt-contextmenu",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
