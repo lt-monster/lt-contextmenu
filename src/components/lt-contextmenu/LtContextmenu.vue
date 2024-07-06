@@ -55,8 +55,18 @@ function menuValueToMapCache(group?: MenuGroupOption) {
     })
 }
 
-function open(event: MouseEvent, param?: any) {
-    event.preventDefault()
+function open(event: MouseEvent | { x: number, y: number }, param?: any) {
+    let x = 0
+    let y = 0
+    if (event instanceof Event) {
+        event.preventDefault()
+        x = event.clientX
+        y = event.clientY
+    }
+    else {
+        x = event.x
+        y = event.y
+    }
     menuParam.value = param
     menuVisible.value = true
     nextTick(() => {
@@ -76,16 +86,16 @@ function open(event: MouseEvent, param?: any) {
         }
 
         const rect = menuRef.value.getBoundingClientRect() as DOMRect
-        if (event.clientY + rect.height > window.innerHeight) {
-            menuRef.value.style.top = (event.clientY - rect.height > 0 ? event.clientY - rect.height : 0) + 'px'
+        if (y + rect.height > window.innerHeight) {
+            menuRef.value.style.top = (y - rect.height > 0 ? y - rect.height : 0) + 'px'
         } else {
-            menuRef.value.style.top = event.clientY + 'px'
+            menuRef.value.style.top = y + 'px'
         }
 
-        if (event.clientX + rect.width > window.innerWidth) {
-            menuRef.value.style.left = (event.clientX - rect.width) + 'px'
+        if (x + rect.width > window.innerWidth) {
+            menuRef.value.style.left = (x - rect.width) + 'px'
         } else {
-            menuRef.value.style.left = event.clientX + 'px'
+            menuRef.value.style.left = x + 'px'
         }
     })
 }
