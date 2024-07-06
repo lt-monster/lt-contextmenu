@@ -105,6 +105,22 @@ type MenuGroupOption = {
 | **value** | 菜单类型为radio时选中的值 |
 | **itemOption** | 菜单项本身 |
 
+## Exposes
+```javascript
+{
+    //打开菜单
+    open: (event: MouseEvent | { x: number, y: number }, param?: any) => void,
+    //关闭菜单
+    close: () => void,
+    //根据菜单id获取菜单选项
+    getMenuOption: (id: string | number) => MenuOption,
+    //当菜单类型为radio时手动设置其value
+    setRadioValue: (id: string | number, value?: MenuValue) => void,
+    //当菜单类型为radio时根据菜单id获取其value
+    getRadioValue: (id: string | number) => MenuValue
+}
+```
+
 ## 🎆 预览
 ![image](./docs/images/1.png)
 ![image](./docs/images/2.png)
