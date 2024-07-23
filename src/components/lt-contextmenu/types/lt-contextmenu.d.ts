@@ -11,6 +11,10 @@ export type MenuProps = {
     groupStyle?: CSSProperties | ((menuParam?: any) => CSSProperties)
     itemClass?: string | ((menuParam?: any, itemOption?: MenuOption) => string)
     itemStyle?: CSSProperties | ((menuParam?: any, itemOption?: MenuOption) => CSSProperties)
+} & MenuEvents
+
+type MenuEvents = {
+    beforeClose?: (close: () => void) => void
 }
 
 export type MenuItemProps = {
@@ -30,11 +34,11 @@ export type MenuTheme = 'light' | 'dark-element' | 'dark-naive'
 
 export type MenuSize = 'normal' | 'small' | 'large'
 
-export type MenuType = 'menu' | 'radio' | 'checkbox'
+export type MenuType = 'menu' | 'radio' | 'toggle'
 
 export type MenuGenericOption = Array<MenuOption | MenuGroupOption>
 
-export type MenuValue = string | number | Array<string | number>
+export type MenuValue = string | number | boolean | Array<string | number | boolean>
 
 export type MenuCacheMap = {
     option: MenuOption,
@@ -56,4 +60,5 @@ export type MenuOption = {
     value?: MenuValue
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     children?: MenuGenericOption
+    change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }

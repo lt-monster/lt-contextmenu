@@ -2,20 +2,25 @@
 import { convertMenuGroupOption } from './lt-contextmenu'
 import IconMore from '@/components/icons/IconMore.vue'
 import IconMoreSolid from '@/components/icons/IconMoreSolid.vue'
-import type { MenuCacheMap, MenuItemProps, MenuOption } from './types/lt-contextmenu';
+import Toggle from '@/components/Toggle/index.vue'
+import type { MenuCacheMap, MenuItemProps, MenuOption, MenuProps } from './types/lt-contextmenu';
 import { computed, h, nextTick, ref, type CSSProperties } from 'vue';
 
 const props = defineProps<MenuItemProps>()
 
+const close = inject('close') as () => void
+const menuProps = inject('menuProps') as MenuProps
+
 const menuValueMap = inject<Map<string | number, MenuCacheMap>>('menuValueMap')
 
-const menuItemContainerRef = ref()
-const menuItemRef = ref()
-const menuChildrenRef = ref()
+const menuItemContainerRef = ref<HTMLElement>()
+const menuItemRef = ref<HTMLElement>()
+const toggleRef = ref<InstanceType<typeof Toggle>>()
+const menuChildrenRef = ref<HTMLElement>()
 
 const childrenVisible = ref(false)
 
-const isDefaultMenu = computed(() => props.fatherOption?.type !== 'radio' && props.fatherOption?.type !== 'checkbox')
+const isDefaultMenu = computed(() => props.fatherOption?.type !== 'radio' && props.fatherOption?.type !== 'toggle')
 
 const radioChecked = computed(() => menuValueMap?.get(props.fatherOption?.id ?? '')?.value === props.option.value)
 
@@ -46,24 +51,24 @@ const itemStyle = computed<CSSProperties>(() => {
     return {}
 })
 
-function isDisabled(option: MenuOption) {
+function isDisabled() {
     let disabled = false
-    if (option.disabled instanceof Function) {
-        disabled = option.disabled(props.menuParam)
+    if (props.option.disabled instanceof Function) {
+        disabled = props.option.disabled(props.menuParam)
     }
     else {
-        disabled = option.disabled ?? false
+        disabled = props.option.disabled ?? false
     }
     return 'menu-item ' + (disabled ? 'menu-item-unusable ' : '')
 }
 
-function isVisiable(option: MenuOption) {
+function isVisiable() {
     let visible = true
-    if (option.visible instanceof Function) {
-        visible = option.visible(props.menuParam)
+    if (props.option.visible instanceof Function) {
+        visible = props.option.visible(props.menuParam)
     }
     else {
-        visible = option.visible ?? true
+        visible = props.option.visible ?? true
     }
 
     return visible
@@ -84,16 +89,42 @@ function labelRender(option: MenuOption) {
 }
 
 //菜单单击事件
-function menuClick(option: MenuOption) {
-    if (props.fatherOption?.type === 'radio') {
-        const mvm = menuValueMap?.get(props.fatherOption.id)
-        if (mvm) {
-            mvm.value = option.value
+function menuClick(e: MouseEvent) {
+    if (props.option.disabled) {
+        return
+    }
+    if (props.option.type === 'radio') {
+        return
+    }
+    if (props.option.type === 'toggle') {
+        const target = e.target as HTMLElement
+        if (toggleRef.value?.$el.contains(<Node>target)) {
+            if (props.option?.change) {
+                props.option.change(props.menuParam, toggleChecked.value, props.option)
+            }
+            return
+        } else {
+            return
         }
     }
-    if (option.handler instanceof Function) {
-        option.handler(props.menuParam, option.value, props.option)
+    if (props.fatherOption?.type === 'radio') {
+        const mvm = menuValueMap?.get(props.fatherOption.id)
+        if (mvm && mvm.value !== props.option.value) {
+            mvm.value = props.option.value
+            if (props.fatherOption?.change) {
+                props.fatherOption.change(props.menuParam, props.option.value, props.option)
+            }
+        }
     }
+    if (props.option.handler instanceof Function) {
+        props.option.handler(props.menuParam, props.option.value, props.option)
+    }
+    close()
+}
+
+const toggleChecked = ref(props.option.value ? true : false)
+function toggle(value: boolean) {
+    toggleChecked.value = value
 }
 
 function showChildrenMenu() {
@@ -105,18 +136,18 @@ function showChildrenMenu() {
                 if (Number.isInteger(props.width)) {
                     width = props.width + 'px'
                 }
-                menuChildrenRef.value.style.width = width
+                menuChildrenRef.value.style.width = String(width)
             }
             if (props.maxWidth) {
                 let maxWidthTemp = props.maxWidth
                 if (Number.isInteger(props.maxWidth)) {
                     maxWidthTemp = props.maxWidth + 'px'
                 }
-                menuChildrenRef.value.style.maxWidth = maxWidthTemp
+                menuChildrenRef.value.style.maxWidth = String(maxWidthTemp)
             }
 
-            const menuContainerRect = menuItemContainerRef.value.getBoundingClientRect() as DOMRect
-            const menuItemRect = menuItemRef.value.getBoundingClientRect() as DOMRect
+            const menuContainerRect = menuItemContainerRef.value!.getBoundingClientRect() as DOMRect
+            const menuItemRect = menuItemRef.value!.getBoundingClientRect() as DOMRect
             const menuChildrenRect = menuChildrenRef.value.getBoundingClientRect() as DOMRect
             let x = menuContainerRect.width + 'px'
             let y = '0'
@@ -138,8 +169,8 @@ function closeChildrenMenu() {
 </script>
 
 <template>
-    <div ref="menuItemContainerRef" v-if="isVisiable(option)" :class="isDisabled(option) + itemClass" :style="itemStyle"
-        @click="menuClick(option)" @mouseenter="showChildrenMenu" @mouseleave="closeChildrenMenu">
+    <div ref="menuItemContainerRef" v-if="isVisiable()" :class="isDisabled() + itemClass" :style="itemStyle"
+        @click="menuClick" @mouseenter="showChildrenMenu" @mouseleave="closeChildrenMenu">
         <div ref="menuItemRef" lt-item-data>
             <div v-if="props.fatherOption?.type === 'radio'" class="menu-item-point" :checked="radioChecked"
                 :style="{ backgroundColor: radioChecked ? 'var(--menu-text-color)' : 'inherit' }">
@@ -148,7 +179,9 @@ function closeChildrenMenu() {
             <div class="menu-item-label">
                 <component :is="labelRender(option)" />
             </div>
-            <component :is="(option.children?.length ?? 0) > 0 && isDefaultMenu ? moreIcon : 'div'"
+            <Toggle ref="toggleRef" v-if="option.type === 'toggle'" @change="toggle" :value="toggleChecked"
+                :size="menuProps.menuSize !== 'large' ? 'small' : 'normal'" />
+            <component v-else :is="(option.children?.length ?? 0) > 0 && isDefaultMenu ? moreIcon : 'div'"
                 class="menu-item-more" />
         </div>
         <div ref="menuChildrenRef" class="menu-container"

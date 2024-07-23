@@ -5,13 +5,17 @@ import LtContextmenuItem from './LtContextmenuItem.vue'
 import { computed, nextTick, ref, watchEffect, type CSSProperties } from 'vue';
 
 const menuVisible = ref(false)
-const menuRef = ref()
+const menuRef = ref<HTMLElement>()
 
 const props = withDefaults(defineProps<MenuProps>(), {
     menuStyle: 'google',
     menuTheme: 'light',
-    menuSize: 'small'
+    menuSize: 'small',
+    beforeClose: (close: () => void) => {
+        close()
+    }
 })
+provide('menuProps', props)
 
 const menuOptions = computed(() => convertMenuGroupOption(props.menuOptions))
 
@@ -70,19 +74,22 @@ function open(event: MouseEvent | { x: number, y: number }, param?: any) {
     menuParam.value = param
     menuVisible.value = true
     nextTick(() => {
+        if (!menuRef.value) {
+            return
+        }
         if (props.width) {
             let width = props.width
             if (Number.isInteger(props.width)) {
                 width = props.width + 'px'
             }
-            menuRef.value.style.width = width
+            menuRef.value.style.width = String(width)
         }
         if (props.maxWidth) {
             let maxWidth = props.maxWidth
             if (Number.isInteger(props.maxWidth)) {
                 maxWidth = props.maxWidth + 'px'
             }
-            menuRef.value.style.maxWidth = maxWidth
+            menuRef.value.style.maxWidth = String(maxWidth)
         }
 
         const rect = menuRef.value.getBoundingClientRect() as DOMRect
@@ -100,16 +107,23 @@ function open(event: MouseEvent | { x: number, y: number }, param?: any) {
     })
 }
 
+provide('close', close)
 function close() {
     menuVisible.value = false
 }
 
+function closeWithBlank(e: MouseEvent) {
+    if (menuVisible.value && !menuRef.value?.contains(<Node>e.target)) {
+        props.beforeClose(close)
+    }
+}
+
 watchEffect((onInvalidate) => {
-    document.addEventListener('click', close, true)
-    document.addEventListener('contextmenu', close, true)
+    document.addEventListener('click', closeWithBlank, true)
+    document.addEventListener('contextmenu', closeWithBlank, true)
     onInvalidate(() => {
-        document.removeEventListener('click', close, true)
-        document.removeEventListener('contextmenu', close, true)
+        document.removeEventListener('click', closeWithBlank, true)
+        document.removeEventListener('contextmenu', closeWithBlank, true)
     });
 })
 
