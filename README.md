@@ -67,6 +67,7 @@ const menuOptions = ref<MenuGroupOption[]>([
 | **groupStyle** | 菜单组的style | CSSProperties | ⬜ | 无 |
 | **itemClass** | 菜单项的class | string | ⬜ | 无 |
 | **itemStyle** | 菜单项的style | CSSProperties | ⬜ | 无 |
+| **beforeClose** | 关闭前的回调，可终止菜单的关闭 | (close: () => void) => void | ⬜ | 无 |
 
 ### 类型说明
 ```typescript
@@ -83,12 +84,14 @@ type MenuOption = {
     disabled?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
     //菜单项的类型, 默认menu, MenuType='menu'|'radio'
     type?: MenuType
-    //菜单类型为radio时选中的值, MenuValue=string|number|Array<string | number>
+    //菜单类型为'radio'、'toggle'时选中的值, MenuValue=string|number|boolean|Array<string|number|boolean>
     value?: MenuValue
     //菜单项点击事件
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     //子菜单, MenuGenericOption=Array<MenuOption | MenuGroupOption>
     children?: MenuGenericOption
+    //其类型为'radio'、'toggle'时改变值会执行
+    change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }
 
 type MenuGroupOption = {
