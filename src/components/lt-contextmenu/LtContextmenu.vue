@@ -104,12 +104,17 @@ function open(event: MouseEvent | { x: number, y: number }, param?: any) {
         } else {
             menuRef.value.style.left = x + 'px'
         }
+
+        window.addEventListener('wheel', close)
     })
 }
 
 provide('close', close)
 function close() {
     menuVisible.value = false
+
+    //移除事件监听
+    window.removeEventListener('wheel', close)
 }
 
 function closeWithBlank(e: MouseEvent) {

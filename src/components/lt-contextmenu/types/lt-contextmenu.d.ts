@@ -34,7 +34,7 @@ export type MenuTheme = 'light' | 'dark-element' | 'dark-naive'
 
 export type MenuSize = 'normal' | 'small' | 'large'
 
-export type MenuType = 'menu' | 'radio' | 'toggle'
+export type MenuItemType = 'menu' | 'radio' | 'toggle'
 
 export type MenuGenericOption = Array<MenuOption | MenuGroupOption>
 
@@ -56,7 +56,7 @@ export type MenuOption = {
     label: string | ((menuParam?: any, itemOption?: MenuOption) => VNode | string)
     visible?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
     disabled?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
-    type?: MenuType
+    type?: MenuItemType
     value?: MenuValue
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     children?: MenuGenericOption
