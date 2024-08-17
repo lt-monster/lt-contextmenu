@@ -82,8 +82,8 @@ type MenuOption = {
     visible?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
     //可选, 菜单是否禁用, 为true时该菜单不可点击
     disabled?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
-    //菜单项的类型, 默认menu, MenuType='menu'|'radio'
-    type?: MenuType
+    //菜单项的类型, 默认menu, MenuItemType='menu'|'radio'
+    type?: MenuItemType
     //菜单类型为'radio'、'toggle'时选中的值, MenuValue=string|number|boolean|Array<string|number|boolean>
     value?: MenuValue
     //菜单项点击事件
