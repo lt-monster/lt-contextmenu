@@ -31,7 +31,12 @@ const menuOptions = ref<MenuGroupOption[]>([
                 id: "2",
                 icon: () => h(IconDetail),
                 label: "详情",
-                disabled: true
+                handler: p => {
+                    console.log('点击了详情')
+                },
+                disabled: (p, o) => {
+                    return o.id === '1'
+                }
             },
         ]
     },

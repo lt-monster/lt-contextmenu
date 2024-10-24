@@ -20,6 +20,28 @@ const menuChildrenRef = ref<HTMLElement>()
 
 const childrenVisible = ref(false)
 
+const disabled = computed(() => {
+    let disabled = false
+    if (props.option.disabled instanceof Function) {
+        disabled = props.option.disabled(props.menuParam, props.option)
+    }
+    else {
+        disabled = props.option.disabled ?? false
+    }
+    return disabled
+})
+
+const visible = computed(() => {
+    let visible = true
+    if (props.option.visible instanceof Function) {
+        visible = props.option.visible(props.menuParam, props.option)
+    }
+    else {
+        visible = props.option.visible ?? true
+    }
+    return visible
+})
+
 const isDefaultMenu = computed(() => props.fatherOption?.type !== 'radio' && props.fatherOption?.type !== 'toggle')
 
 const radioChecked = computed(() => menuValueMap?.get(props.fatherOption?.id ?? '')?.value === props.option.value)
@@ -29,6 +51,10 @@ const moreIcon = computed(() => {
         case 'edge': return IconMoreSolid
         default: return IconMore
     }
+})
+
+const containerClass = computed(() => {
+    return disabled.value ? 'menu-item menu-item-unusable ' : 'menu-item '
 })
 
 const itemClass = computed(() => {
@@ -51,29 +77,6 @@ const itemStyle = computed<CSSProperties>(() => {
     return {}
 })
 
-function isDisabled() {
-    let disabled = false
-    if (props.option.disabled instanceof Function) {
-        disabled = props.option.disabled(props.menuParam)
-    }
-    else {
-        disabled = props.option.disabled ?? false
-    }
-    return 'menu-item ' + (disabled ? 'menu-item-unusable ' : '')
-}
-
-function isVisiable() {
-    let visible = true
-    if (props.option.visible instanceof Function) {
-        visible = props.option.visible(props.menuParam)
-    }
-    else {
-        visible = props.option.visible ?? true
-    }
-
-    return visible
-}
-
 function labelRender(option: MenuOption) {
     if (typeof option.label === 'string') {
         return h('span', null, option.label)
@@ -90,9 +93,10 @@ function labelRender(option: MenuOption) {
 
 //菜单单击事件
 function menuClick(e: MouseEvent) {
-    if (props.option.disabled) {
+    if (disabled.value) {
         return
     }
+
     if (props.option.type === 'radio') {
         return
     }
@@ -169,7 +173,7 @@ function closeChildrenMenu() {
 </script>
 
 <template>
-    <div ref="menuItemContainerRef" v-if="isVisiable()" :class="isDisabled() + itemClass" :style="itemStyle"
+    <div ref="menuItemContainerRef" v-if="visible" :class="containerClass + itemClass" :style="itemStyle"
         @click="menuClick" @mouseenter="showChildrenMenu" @mouseleave="closeChildrenMenu">
         <div ref="menuItemRef" lt-item-data>
             <div v-if="props.fatherOption?.type === 'radio'" class="menu-item-point" :checked="radioChecked"
