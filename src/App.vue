@@ -7,7 +7,8 @@ import Toggle from '@/components/Toggle/index.vue'
 const ltContextmenu = ref<InstanceType<typeof GoogleContextmenu>>()
 
 const data = {
-  name: 'lijiatu'
+  name: 'lijiatu',
+  children: ['1','2']
 }
 
 </script>

@@ -35,9 +35,23 @@ const menuOptions = ref<MenuGroupOption[]>([
                     console.log('点击了详情')
                 },
                 disabled: (p, o) => {
-                    return o.id === '1'
+                    return true
                 }
             },
+            {
+                id: "3",
+                label: '其他',
+                children: (menuParam: { children: string[] }) => {
+                    console.log('menuParam',menuParam)
+                    return menuParam.children.map(item => {
+                        return {
+                            id: item,
+                            label: item
+                        }
+                    })
+                    // return []
+                }
+            }
         ]
     },
     {

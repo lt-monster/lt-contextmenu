@@ -50,6 +50,8 @@ export type MenuGroupOption = {
     options: MenuOption[]
 }
 
+export type MenuChildrenOption = MenuGenericOption | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuGenericOption)
+
 export type MenuOption = {
     id: string | number
     icon?: (menuParam?: any, itemOption?: MenuOption) => VNode
@@ -59,6 +61,6 @@ export type MenuOption = {
     type?: MenuItemType
     value?: MenuValue
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
-    children?: MenuGenericOption
+    children?: MenuChildrenOption
     change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }
