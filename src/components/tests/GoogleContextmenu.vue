@@ -35,7 +35,7 @@ const menuOptions = ref<MenuGroupOption[]>([
                     console.log('点击了详情')
                 },
                 disabled: (p, o) => {
-                    return o.id === '1'
+                    return true
                 }
             },
         ]

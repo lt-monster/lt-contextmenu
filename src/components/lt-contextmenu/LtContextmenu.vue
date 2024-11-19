@@ -118,17 +118,21 @@ function close() {
 }
 
 function closeWithBlank(e: MouseEvent) {
-    if (menuVisible.value && !menuRef.value?.contains(<Node>e.target)) {
+    if (menuVisible.value && !menuRef.value?.contains(e.target as Node)) {
         props.beforeClose(close)
     }
 }
 
 watchEffect((onInvalidate) => {
-    document.addEventListener('click', closeWithBlank, true)
-    document.addEventListener('contextmenu', closeWithBlank, true)
+    if(typeof window !== 'undefined'){
+        document.addEventListener('click', closeWithBlank, true)
+        document.addEventListener('contextmenu', closeWithBlank, true)
+    }
     onInvalidate(() => {
-        document.removeEventListener('click', closeWithBlank, true)
-        document.removeEventListener('contextmenu', closeWithBlank, true)
+        if(typeof window !== 'undefined'){
+            document.removeEventListener('click', closeWithBlank, true)
+            document.removeEventListener('contextmenu', closeWithBlank, true)
+        }
     });
 })
 
