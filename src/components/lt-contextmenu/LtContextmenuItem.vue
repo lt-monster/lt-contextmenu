@@ -3,7 +3,7 @@ import { convertMenuGroupOption } from './lt-contextmenu'
 import IconMore from '@/components/icons/IconMore.vue'
 import IconMoreSolid from '@/components/icons/IconMoreSolid.vue'
 import Toggle from '@/components/Toggle/index.vue'
-import type { MenuCacheMap, MenuItemProps, MenuOption, MenuProps } from './types/lt-contextmenu';
+import type { MenuCacheMap, MenuItemProps, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu';
 import { computed, h, nextTick, ref, type CSSProperties } from 'vue';
 
 const props = defineProps<MenuItemProps>()
@@ -44,7 +44,17 @@ const visible = computed(() => {
 
 const isDefaultMenu = computed(() => props.fatherOption?.type !== 'radio' && props.fatherOption?.type !== 'toggle')
 
-const radioChecked = computed(() => menuValueMap?.get(props.fatherOption?.id ?? '')?.value === props.option.value)
+const radioChecked = computed(() => {
+    const val = menuValueMap?.get(props.fatherOption?.id ?? '')?.value
+    let realValue
+    if(typeof val === 'function'){
+        realValue = val(props.menuParam)
+    }
+    else{
+        realValue = val
+    }
+    return realValue === props.option.value
+})
 
 const moreIcon = computed(() => {
     switch (props.menuStyle) {
@@ -108,7 +118,7 @@ function menuClick(e: MouseEvent) {
     }
     if (props.option.type === 'toggle') {
         const target = e.target as HTMLElement
-        if (toggleRef.value?.$el.contains(<Node>target)) {
+        if (toggleRef.value?.$el.contains(target)) {
             if (props.option?.change) {
                 props.option.change(props.menuParam, toggleChecked.value, props.option)
             }
@@ -122,12 +132,26 @@ function menuClick(e: MouseEvent) {
         if (mvm && mvm.value !== props.option.value) {
             mvm.value = props.option.value
             if (props.fatherOption?.change) {
-                props.fatherOption.change(props.menuParam, props.option.value, props.option)
+                let val: MenuValue
+                if(typeof props.option.value === 'function'){
+                    val = props.option.value(props.menuParam)
+                }
+                else{
+                    val = props.option.value as MenuValue
+                }
+                props.fatherOption.change(props.menuParam, val, props.option)
             }
         }
     }
     if (props.option.handler instanceof Function) {
-        props.option.handler(props.menuParam, props.option.value, props.option)
+        let val: MenuValue
+        if(typeof props.option.value === 'function'){
+            val = props.option.value(props.menuParam)
+        }
+        else{
+            val = props.option.value as MenuValue
+        }
+        props.option.handler(props.menuParam, val, props.option)
     }
     close()
 }

@@ -41,12 +41,19 @@ const menuOptions = ref<MenuGroupOption[]>([
             {
                 id: "3",
                 label: '其他',
+                type: 'radio',
+                value: (menuParam: { children: string[] }) => {
+                    if(menuParam.children.length > 0){
+                        return menuParam.children[menuParam.children.length - 1]
+                    }
+                    return ''
+                },
                 children: (menuParam: { children: string[] }) => {
-                    console.log('menuParam',menuParam)
                     return menuParam.children.map(item => {
                         return {
                             id: item,
-                            label: item
+                            label: item,
+                            value: item
                         }
                     })
                     // return []

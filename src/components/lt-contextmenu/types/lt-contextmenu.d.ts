@@ -42,7 +42,7 @@ export type MenuValue = string | number | boolean | Array<string | number | bool
 
 export type MenuCacheMap = {
     option: MenuOption,
-    value?: MenuValue
+    value?: MenuValue | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuValue)
 }
 
 export type MenuGroupOption = {
@@ -59,7 +59,7 @@ export type MenuOption = {
     visible?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
     disabled?: boolean | ((menuParam?: any, itemOption?: MenuOption) => boolean)
     type?: MenuItemType
-    value?: MenuValue
+    value?: MenuValue | ((menuParam?: any) => MenuValue)
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     children?: MenuChildrenOption
     change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
