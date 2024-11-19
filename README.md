@@ -3,7 +3,7 @@
 
 一款vue3开发的右键菜单组件
 
-[![Nuget](https://img.shields.io/badge/version-1.3.5-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
+[![Nuget](https://img.shields.io/badge/version-1.3.10-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
 
 ## 🚀 安装
 
@@ -88,8 +88,8 @@ type MenuOption = {
     value?: MenuValue
     //菜单项点击事件
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
-    //子菜单, MenuGenericOption=Array<MenuOption | MenuGroupOption>
-    children?: MenuGenericOption
+    //子菜单, MenuChildrenOption=MenuGenericOption | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuGenericOption)
+    children?: MenuChildrenOption
     //其类型为'radio'、'toggle'时改变值会执行
     change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }

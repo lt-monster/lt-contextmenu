@@ -77,6 +77,12 @@ const itemStyle = computed<CSSProperties>(() => {
     return {}
 })
 
+const childrenVisibility = computed(() => props.option.children 
+    && ((Array.isArray(props.option.children) && props.option.children.length > 0) || typeof props.option.children === 'function') 
+    && childrenVisible.value 
+    && isDefaultMenu.value
+)
+
 function labelRender(option: MenuOption) {
     if (typeof option.label === 'string') {
         return h('span', null, option.label)
@@ -167,6 +173,7 @@ function showChildrenMenu() {
 }
 
 function closeChildrenMenu() {
+    console.log('关闭了菜单')
     childrenVisible.value = false
 }
 
@@ -188,9 +195,8 @@ function closeChildrenMenu() {
             <component v-else :is="(option.children?.length ?? 0) > 0 && isDefaultMenu ? moreIcon : 'div'"
                 class="menu-item-more" />
         </div>
-        <div ref="menuChildrenRef" class="menu-container"
-            v-if="option.children && option.children.length > 0 && childrenVisible && isDefaultMenu" lt-item-children>
-            <div class="menu-item-group" v-for="groupOptionChildren in convertMenuGroupOption(option.children)"
+        <div ref="menuChildrenRef" class="menu-container" v-if="childrenVisibility" lt-item-children>
+            <div class="menu-item-group" v-for="groupOptionChildren in convertMenuGroupOption(option.children!,menuParam,toggleChecked,option)"
                 :key="groupOptionChildren.group">
                 <template v-for="optionChildren in groupOptionChildren.options" :key="optionChildren.label">
                     <LtContextmenuItem :option="optionChildren" :menuParam="menuParam" :fatherOption="option"

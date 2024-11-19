@@ -38,6 +38,20 @@ const menuOptions = ref<MenuGroupOption[]>([
                     return true
                 }
             },
+            {
+                id: "3",
+                label: '其他',
+                children: (menuParam: { children: string[] }) => {
+                    console.log('menuParam',menuParam)
+                    return menuParam.children.map(item => {
+                        return {
+                            id: item,
+                            label: item
+                        }
+                    })
+                    // return []
+                }
+            }
         ]
     },
     {

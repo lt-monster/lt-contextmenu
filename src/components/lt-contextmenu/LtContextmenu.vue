@@ -51,7 +51,7 @@ function menuValueToMapCache(group?: MenuGroupOption) {
             option,
             value: option.value
         })
-        if (option.children && option.children.length > 0) {
+        if (option.children && Array.isArray(option.children) && option.children.length > 0) {
             const newGroup = convertMenuGroupOption(option.children)
             newGroup.forEach(ng => menuValueToMapCache(ng))
         }
