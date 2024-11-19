@@ -85,7 +85,7 @@ type MenuOption = {
     //菜单项的类型, 默认menu, MenuItemType='menu'|'radio'
     type?: MenuItemType
     //菜单类型为'radio'、'toggle'时选中的值, MenuValue=string|number|boolean|Array<string|number|boolean>
-    value?: MenuValue
+    value?: MenuValue | ((menuParam?: any) => MenuValue)
     //菜单项点击事件
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     //子菜单, MenuChildrenOption=MenuGenericOption | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuGenericOption)
