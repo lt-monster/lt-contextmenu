@@ -3,7 +3,7 @@ import { convertMenuGroupOption } from './lt-contextmenu'
 import IconMore from '@/components/icons/IconMore.vue'
 import IconMoreSolid from '@/components/icons/IconMoreSolid.vue'
 import Toggle from '@/components/Toggle/index.vue'
-import type { MenuCacheMap, MenuItemProps, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu';
+import type { MenuCacheMap, MenuGroupOption, MenuItemProps, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu';
 import { computed, h, nextTick, ref, type CSSProperties } from 'vue';
 
 const props = defineProps<MenuItemProps>()
@@ -19,6 +19,17 @@ const toggleRef = ref<InstanceType<typeof Toggle>>()
 const menuChildrenRef = ref<HTMLElement>()
 
 const childrenVisible = ref(false)
+
+const menuValue = computed<MenuValue|undefined>(() => {
+    let value:MenuValue|undefined = undefined
+    if(typeof props.option.value === 'function'){
+        value = props.option.value(props.menuParam)
+    }
+    else{
+        value = props.option.value
+    }
+    return value
+})
 
 const disabled = computed(() => {
     let disabled = false
@@ -53,7 +64,7 @@ const radioChecked = computed(() => {
     else{
         realValue = val
     }
-    return realValue === props.option.value
+    return realValue === menuValue.value
 })
 
 const moreIcon = computed(() => {
@@ -77,6 +88,17 @@ const itemClass = computed(() => {
     return ''
 })
 
+const children = computed<MenuGroupOption[]>(() => {
+    let menuGroup:MenuGroupOption[] = []
+    if(typeof props.option.children === 'function'){
+        menuGroup = convertMenuGroupOption(props.option.children(props.menuParam, menuValue.value, props.option),props.menuParam,toggleChecked.value,props.option)
+    }
+    else{
+        menuGroup = convertMenuGroupOption(props.option.children!,props.menuParam,toggleChecked.value,props.option)
+    }
+    return menuGroup
+})
+
 const itemStyle = computed<CSSProperties>(() => {
     if (props.itemStyle) {
         if (typeof props.itemStyle === 'function') {
@@ -87,11 +109,7 @@ const itemStyle = computed<CSSProperties>(() => {
     return {}
 })
 
-const childrenVisibility = computed(() => props.option.children 
-    && ((Array.isArray(props.option.children) && props.option.children.length > 0) || typeof props.option.children === 'function') 
-    && childrenVisible.value 
-    && isDefaultMenu.value
-)
+const childrenVisibility = computed(() => children.value.length > 0 && childrenVisible.value  && isDefaultMenu.value)
 
 function labelRender(option: MenuOption) {
     if (typeof option.label === 'string') {
@@ -129,34 +147,22 @@ function menuClick(e: MouseEvent) {
     }
     if (props.fatherOption?.type === 'radio') {
         const mvm = menuValueMap?.get(props.fatherOption.id)
-        if (mvm && mvm.value !== props.option.value) {
-            mvm.value = props.option.value
+        if (mvm && mvm.value !== menuValue.value) {
+            if(typeof mvm.value !== 'function'){
+                mvm.value = menuValue.value
+            }
             if (props.fatherOption?.change) {
-                let val: MenuValue
-                if(typeof props.option.value === 'function'){
-                    val = props.option.value(props.menuParam)
-                }
-                else{
-                    val = props.option.value as MenuValue
-                }
-                props.fatherOption.change(props.menuParam, val, props.option)
+                props.fatherOption.change(props.menuParam, menuValue.value, props.option)
             }
         }
     }
     if (props.option.handler instanceof Function) {
-        let val: MenuValue
-        if(typeof props.option.value === 'function'){
-            val = props.option.value(props.menuParam)
-        }
-        else{
-            val = props.option.value as MenuValue
-        }
-        props.option.handler(props.menuParam, val, props.option)
+        props.option.handler(props.menuParam, menuValue.value, props.option)
     }
     close()
 }
 
-const toggleChecked = ref(props.option.value ? true : false)
+const toggleChecked = ref(menuValue.value ? true : false)
 function toggle(value: boolean) {
     toggleChecked.value = value
 }
@@ -189,7 +195,7 @@ function showChildrenMenu() {
                 x = -menuChildrenRect.width + 'px'
             }
             if (menuChildrenRect.y + menuChildrenRect.height > window.innerHeight) {
-                y = -(props.option.children!.length - 1) * menuItemRect.height + 'px'
+                y = -(children.value.length - 1) * menuItemRect.height + 'px'
             }
             menuChildrenRef.value.style.transform = `translate(${x}, ${y})`
         }
@@ -197,7 +203,7 @@ function showChildrenMenu() {
 }
 
 function closeChildrenMenu() {
-    console.log('关闭了菜单')
+    // console.log('关闭了菜单')
     childrenVisible.value = false
 }
 
@@ -216,11 +222,11 @@ function closeChildrenMenu() {
             </div>
             <Toggle ref="toggleRef" v-if="option.type === 'toggle'" @change="toggle" :value="toggleChecked"
                 :size="menuProps.menuSize !== 'large' ? 'small' : 'normal'" />
-            <component v-else :is="(option.children?.length ?? 0) > 0 && isDefaultMenu ? moreIcon : 'div'"
+            <component v-else :is="children.length > 0 && isDefaultMenu ? moreIcon : 'div'"
                 class="menu-item-more" />
         </div>
         <div ref="menuChildrenRef" class="menu-container" v-if="childrenVisibility" lt-item-children>
-            <div class="menu-item-group" v-for="groupOptionChildren in convertMenuGroupOption(option.children!,menuParam,toggleChecked,option)"
+            <div class="menu-item-group" v-for="groupOptionChildren in children"
                 :key="groupOptionChildren.group">
                 <template v-for="optionChildren in groupOptionChildren.options" :key="optionChildren.label">
                     <LtContextmenuItem :option="optionChildren" :menuParam="menuParam" :fatherOption="option"

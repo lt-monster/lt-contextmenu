@@ -14,6 +14,12 @@ import IconDelete from "@/components/icons/IconDelete.vue"
 import IconCollect from "@/components/icons/IconCollect.vue"
 import IconToggle from "@/components/icons/IconToggle.vue"
 
+type ActorInfo = {
+    Name: string
+}
+
+const actors = ref<ActorInfo[]>([])
+
 const tlContextmenuRef = ref<InstanceType<typeof LtContextmenu>>()
 
 const selectRadioValue = ref('none')
