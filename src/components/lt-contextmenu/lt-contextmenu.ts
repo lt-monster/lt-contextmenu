@@ -26,3 +26,14 @@ function genericOptionToGroupOption(options: MenuGenericOption){
     }
     return menuGroupOptions
 }
+
+export function getMenuVisible(option: MenuOption, menuParam?: any){
+    let visible = true
+    if (typeof option.visible === 'function') {
+        visible = option.visible(menuParam, option)
+    }
+    else {
+        visible = option.visible ?? true
+    }
+    return visible
+}

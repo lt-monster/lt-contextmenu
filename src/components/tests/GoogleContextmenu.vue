@@ -50,7 +50,7 @@ const menuOptions = ref<MenuGroupOption[]>([
                 label: '其他',
                 type: 'radio',
                 visible(menuParam:any){
-                    return menuParam?.name === 'lijiatu'
+                    return menuParam?.name !== 'lijiatu'
                 },
                 children: () => {
                     return cs.value.map(item => {

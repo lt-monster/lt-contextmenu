@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { convertMenuGroupOption } from './lt-contextmenu'
+import { convertMenuGroupOption, getMenuVisible } from './lt-contextmenu'
 import type { MenuCacheMap, MenuGroupOption, MenuProps, MenuValue } from './types/lt-contextmenu'
 import LtContextmenuItem from './LtContextmenuItem.vue'
 import { computed, nextTick, ref, watchEffect, type CSSProperties } from 'vue';
@@ -44,6 +44,10 @@ const groupStyle = computed<CSSProperties>(() => {
     }
     return {}
 })
+
+function groupVisible(menuGroupOption: MenuGroupOption){
+    return menuGroupOption.options.map(o => getMenuVisible(o, menuParam.value)).some(v => v)
+}
 
 function menuValueToMapCache(group?: MenuGroupOption) {
     group?.options.forEach(option => {
@@ -156,13 +160,15 @@ defineExpose({
         <div ref="menuRef" v-if="menuVisible && menuOptions.length > 0" class="menu-container" :menuStyle="menuStyle"
             :menuTheme="menuTheme" :menuSize="menuSize">
             <slot name="header" :menuParam="menuParam"></slot>
-            <div :class="groupClass" :style="groupStyle" v-for="groupOption in menuOptions" :key="groupOption.group">
-                <template v-for="option in groupOption.options" :key="option.label">
-                    <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
-                        :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
-                        :item-style="props.itemStyle" />
-                </template>
-            </div>
+            <template v-for="groupOption in menuOptions" :key="groupOption.group">
+                <div v-if="groupVisible(groupOption)" :class="groupClass" :style="groupStyle">
+                    <template v-for="option in groupOption.options" :key="option.label">
+                        <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
+                            :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
+                            :item-style="props.itemStyle" />
+                    </template>
+                </div>
+            </template>
             <slot name="footer" :menuParam="menuParam"></slot>
         </div>
     </Teleport>

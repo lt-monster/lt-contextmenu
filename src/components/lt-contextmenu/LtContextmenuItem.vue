@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { convertMenuGroupOption } from './lt-contextmenu'
+import { convertMenuGroupOption, getMenuVisible } from './lt-contextmenu'
 import IconMore from '@/components/icons/IconMore.vue'
 import IconMoreSolid from '@/components/icons/IconMoreSolid.vue'
 import Toggle from '@/components/Toggle/index.vue'
@@ -33,7 +33,7 @@ const menuValue = computed<MenuValue|undefined>(() => {
 
 const disabled = computed(() => {
     let disabled = false
-    if (props.option.disabled instanceof Function) {
+    if (typeof props.option.disabled === 'function') {
         disabled = props.option.disabled(props.menuParam, props.option)
     }
     else {
@@ -42,16 +42,7 @@ const disabled = computed(() => {
     return disabled
 })
 
-const visible = computed(() => {
-    let visible = true
-    if (props.option.visible instanceof Function) {
-        visible = props.option.visible(props.menuParam, props.option)
-    }
-    else {
-        visible = props.option.visible ?? true
-    }
-    return visible
-})
+const visible = computed(() => getMenuVisible(props.option, props.menuParam))
 
 const isDefaultMenu = computed(() => props.fatherOption?.type !== 'radio' && props.fatherOption?.type !== 'toggle')
 
@@ -156,7 +147,7 @@ function menuClick(e: MouseEvent) {
             }
         }
     }
-    if (props.option.handler instanceof Function) {
+    if (typeof props.option.handler === 'function') {
         props.option.handler(props.menuParam, menuValue.value, props.option)
     }
     close()
