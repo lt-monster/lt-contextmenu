@@ -2,7 +2,6 @@ import type { MenuChildrenOption, MenuGenericOption, MenuGroupOption, MenuOption
 
 //转换为菜单组
 export function convertMenuGroupOption(options: MenuChildrenOption, menuParam?: any, value?: MenuValue, itemOption?: MenuOption) {
-    console.log('convertMenuGroupOption-menuParam',menuParam)
     let genericOption:MenuChildrenOption = []
     if(Array.isArray(options)){
         genericOption = options
@@ -24,19 +23,6 @@ function genericOptionToGroupOption(options: MenuGenericOption){
                 options: options
             }] as MenuGroupOption[]
         }
-        menuGroupOptions = menuGroupOptions.filter(mg => mg.options.filter(m => isVisible(m)).length > 0)
     }
     return menuGroupOptions
-}
-
-//是否可见
-export function isVisible(option: MenuOption, menuParam?: any) {
-    let isVisible = true
-    if (option.visible instanceof Function) {
-        isVisible = option.visible(menuParam)
-    }
-    else {
-        isVisible = option.visible ?? true
-    }
-    return isVisible
 }
