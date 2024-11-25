@@ -24,6 +24,13 @@ const tlContextmenuRef = ref<InstanceType<typeof LtContextmenu>>()
 
 const selectRadioValue = ref('none')
 
+const ss = ['lijiatu']
+
+const cs = ref<string[]>([])
+setTimeout(() => {
+    cs.value = ['操作1','操作2']
+}, 2000)
+
 const menuOptions = ref<MenuGroupOption[]>([
     {
         group: "group1",
@@ -31,38 +38,28 @@ const menuOptions = ref<MenuGroupOption[]>([
             {
                 id: "1",
                 icon: () => h(IconRefresh),
-                label: "刷新"
-            },
-            {
-                id: "2",
-                icon: () => h(IconDetail),
-                label: "详情",
-                handler: p => {
-                    console.log('点击了详情')
+                label: "刷新",
+                visible(menuParam:any){
+                    console.log('menuParam',menuParam)
+                    return menuParam?.name === 'lijiatu' && ss.includes(menuParam?.name)
                 },
-                disabled: (p, o) => {
-                    return true
-                }
+                // visible: false
             },
             {
                 id: "3",
                 label: '其他',
                 type: 'radio',
-                value: (menuParam: { children: string[] }) => {
-                    if(menuParam.children.length > 0){
-                        return menuParam.children[menuParam.children.length - 1]
-                    }
-                    return ''
+                visible(menuParam:any){
+                    return menuParam?.name === 'lijiatu'
                 },
-                children: (menuParam: { children: string[] }) => {
-                    return menuParam.children.map(item => {
+                children: () => {
+                    return cs.value.map(item => {
                         return {
                             id: item,
                             label: item,
                             value: item
                         }
                     })
-                    // return []
                 }
             }
         ]
