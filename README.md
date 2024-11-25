@@ -3,7 +3,7 @@
 
 一款vue3开发的右键菜单组件
 
-[![Nuget](https://img.shields.io/badge/version-1.3.14-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
+[![Nuget](https://img.shields.io/badge/version-1.3.15-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
 
 ## 🚀 安装
 
