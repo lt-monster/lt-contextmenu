@@ -5,6 +5,9 @@
   --menu-group-border-color: rgba(126, 173, 251, 0.4);
   --menu-item-bg-color-hover: #f2f2f2;
   --menu-item-more-color: #606266;
+  --scrollbar-track-backgroun-color: rgb(232.8, 233.4, 234.6);
+  --scrollbar-thumb-backgroun-color: rgba(177.3, 179.4, 183.6, .6);
+  --scrollbar-thumb-backgroun-color-hover: rgb(177.3, 179.4, 183.6);
 }
 
 .menu-container[menuTheme=dark-element] {
@@ -13,6 +16,9 @@
   --menu-text-color: #e5eaf3;
   --menu-group-border-color: rgba(144, 147, 153, 0.6);
   --menu-item-bg-color-hover: rgb(67, 74, 80);
+  --scrollbar-track-backgroun-color: #53565c;
+  --scrollbar-thumb-backgroun-color: #71747a;
+  --scrollbar-thumb-backgroun-color-hover: #909399;
 }
 
 .menu-container[menuTheme=dark-naive] {
@@ -21,4 +27,7 @@
   --menu-text-color: #e5eaf3;
   --menu-group-border-color: rgba(144, 147, 153, 0.6);
   --menu-item-bg-color-hover: rgb(89,89,94);
+  --scrollbar-track-backgroun-color: #53565c;
+  --scrollbar-thumb-backgroun-color: #71747a;
+  --scrollbar-thumb-backgroun-color-hover: #909399;
 }

@@ -7,10 +7,13 @@ export type MenuProps = {
     menuSize?: MenuSize
     width?: string | number
     maxWidth?: string | number
+    height?: string | number
+    maxHeight?: string | number
     groupClass?: string | ((menuParam?: any) => string)
     groupStyle?: CSSProperties | ((menuParam?: any) => CSSProperties)
     itemClass?: string | ((menuParam?: any, itemOption?: MenuOption) => string)
     itemStyle?: CSSProperties | ((menuParam?: any, itemOption?: MenuOption) => CSSProperties)
+    expandTrigger?: 'hover'|'click'
 } & MenuEvents
 
 type MenuEvents = {
@@ -26,6 +29,7 @@ export type MenuItemProps = {
     maxWidth?: string | number
     itemClass?: string | ((menuParam?: any, itemOption?: MenuOption) => string)
     itemStyle?: CSSProperties | ((menuParam?: any, itemOption?: MenuOption) => CSSProperties)
+    expandTrigger?: 'hover'|'click'
 }
 
 export type MenuStyle = 'google' | 'edge'
@@ -43,6 +47,7 @@ export type MenuValue = string | number | boolean | Array<string | number | bool
 export type MenuCacheMap = {
     option: MenuOption,
     value?: MenuValue | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuValue)
+    fatherId?: string | number
 }
 
 export type MenuGroupOption = {
@@ -51,6 +56,13 @@ export type MenuGroupOption = {
 }
 
 export type MenuChildrenOption = MenuGenericOption | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuGenericOption)
+
+export type MenuChildrenStyle = {
+    width?: string | number
+    maxWidth?: string | number
+    height?: string | number
+    maxHeight?: string | number
+}
 
 export type MenuOption = {
     id: string | number
@@ -62,5 +74,6 @@ export type MenuOption = {
     value?: MenuValue | ((menuParam?: any) => MenuValue)
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     children?: MenuChildrenOption
+    childrenStyle?: MenuChildrenStyle
     change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }

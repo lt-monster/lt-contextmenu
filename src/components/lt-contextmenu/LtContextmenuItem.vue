@@ -3,22 +3,54 @@ import { convertMenuGroupOption, getMenuVisible } from './lt-contextmenu'
 import IconMore from '@/components/icons/IconMore.vue'
 import IconMoreSolid from '@/components/icons/IconMoreSolid.vue'
 import Toggle from '@/components/Toggle/index.vue'
-import type { MenuCacheMap, MenuGroupOption, MenuItemProps, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu';
+import type { MenuCacheMap, MenuChildrenOption, MenuGroupOption, MenuItemProps, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu';
 import { computed, h, nextTick, ref, type CSSProperties } from 'vue';
 
 const props = defineProps<MenuItemProps>()
 
 const close = inject('close') as () => void
 const menuProps = inject('menuProps') as MenuProps
-
 const menuValueMap = inject<Map<string | number, MenuCacheMap>>('menuValueMap')
+const visibleChildrenMenuIds = toRef(inject<Array<string|number>>('visibleChildrenMenuIds'))
 
-const menuItemContainerRef = ref<HTMLElement>()
-const menuItemRef = ref<HTMLElement>()
-const toggleRef = ref<InstanceType<typeof Toggle>>()
-const menuChildrenRef = ref<HTMLElement>()
-
-const childrenVisible = ref(false)
+const width = inject<string>('width')
+const maxWidth = inject<string>('maxWidth')
+const childrenWidth = computed(() => {
+    if(typeof props.option.childrenStyle?.width === 'number'){
+        return props.option.childrenStyle.width+'px'
+    }
+    else if(typeof props.option.childrenStyle?.width === 'string'){
+        return props.option.childrenStyle.width
+    }
+    return ''
+})
+const childrenMaxWidth = computed(() => {
+    if(typeof props.option.childrenStyle?.maxWidth === 'number'){
+        return props.option.childrenStyle.maxWidth+'px'
+    }
+    else if(typeof props.option.childrenStyle?.maxWidth === 'string'){
+        return props.option.childrenStyle.maxWidth
+    }
+    return ''
+})
+const height = computed(() => {
+    if(typeof props.option.childrenStyle?.height === 'number'){
+        return props.option.childrenStyle.height+'px'
+    }
+    else if(typeof props.option.childrenStyle?.height === 'string'){
+        return props.option.childrenStyle.height
+    }
+    return ''
+})
+const maxHeight = computed(() => {
+    if(typeof props.option.childrenStyle?.maxHeight === 'number'){
+        return props.option.childrenStyle.maxHeight+'px'
+    }
+    else if(typeof props.option.childrenStyle?.maxHeight === 'string'){
+        return props.option.childrenStyle.maxHeight
+    }
+    return ''
+})
 
 const menuValue = computed<MenuValue|undefined>(() => {
     let value:MenuValue|undefined = undefined
@@ -29,6 +61,48 @@ const menuValue = computed<MenuValue|undefined>(() => {
         value = props.option.value
     }
     return value
+})
+
+const menuItemContainerRef = ref<HTMLElement>()
+const menuItemRef = ref<HTMLElement>()
+const toggleRef = ref<InstanceType<typeof Toggle>>()
+const menuChildrenRef = ref<HTMLElement>()
+const toggleChecked = ref(menuValue.value ? true : false)
+
+const children = computed<MenuGroupOption[]>(() => {
+    let menuGroup:MenuGroupOption[] = []
+    if(typeof props.option.children === 'function'){
+        menuGroup = convertMenuGroupOption(props.option.children(props.menuParam, menuValue.value, props.option),props.menuParam,toggleChecked.value,props.option)
+    }
+    else{
+        menuGroup = convertMenuGroupOption(props.option.children!,props.menuParam,toggleChecked.value,props.option)
+    }
+    return menuGroup
+})
+//子菜单是否存在子菜单，不存在height,maxHeight才有效
+const grandsonExistence = computed(() => {
+    for (const menuGroupOption of children.value) {
+        for (const menuOption of menuGroupOption.options) {
+            let children:MenuChildrenOption = []
+            if(Array.isArray(menuOption.children)){
+                children = menuOption.children
+            }
+            else if(typeof menuOption.children === 'function'){
+                let value:MenuValue|undefined = undefined
+                if(typeof menuOption.value === 'function'){
+                    value = menuOption.value(props.menuParam)
+                }
+                else{
+                    value = menuOption.value
+                }
+                children = menuOption.children(props.menuParam, value, props.option)
+            }
+            if(children.length > 0){
+                return true
+            }
+        }
+    }
+    return  false
 })
 
 const disabled = computed(() => {
@@ -79,28 +153,44 @@ const itemClass = computed(() => {
     return ''
 })
 
-const children = computed<MenuGroupOption[]>(() => {
-    let menuGroup:MenuGroupOption[] = []
-    if(typeof props.option.children === 'function'){
-        menuGroup = convertMenuGroupOption(props.option.children(props.menuParam, menuValue.value, props.option),props.menuParam,toggleChecked.value,props.option)
-    }
-    else{
-        menuGroup = convertMenuGroupOption(props.option.children!,props.menuParam,toggleChecked.value,props.option)
-    }
-    return menuGroup
-})
-
 const itemStyle = computed<CSSProperties>(() => {
+    let bgStyle:CSSProperties = {}
+    if(visibleChildrenMenuIds.value?.includes(props.option.id)){
+        bgStyle.backgroundColor = 'var(--menu-item-bg-color-hover)'
+    }
     if (props.itemStyle) {
         if (typeof props.itemStyle === 'function') {
             return props.itemStyle(props.menuParam)
         }
-        return props.itemStyle
+        return {
+            ...props.itemStyle,
+            ...bgStyle
+        }
     }
-    return {}
+    return bgStyle
 })
 
-const childrenVisibility = computed(() => children.value.length > 0 && childrenVisible.value  && isDefaultMenu.value)
+const childrenMenuContainerStyle = ref<CSSProperties>({
+    width: width,
+    maxWidth: maxWidth
+})
+if(childrenWidth.value){
+    childrenMenuContainerStyle.value.width = childrenWidth.value
+}
+if(childrenMaxWidth.value){
+    childrenMenuContainerStyle.value.maxWidth = childrenMaxWidth.value
+}
+if(!grandsonExistence.value){
+    if(height.value){
+        childrenMenuContainerStyle.value.height = height.value
+    }
+    if(maxHeight.value){
+        childrenMenuContainerStyle.value.maxHeight = maxHeight.value
+    }
+    childrenMenuContainerStyle.value.overflowY = 'auto'
+}
+
+const childrenVisibility = computed(() => children.value.length > 0 && isDefaultMenu.value && visibleChildrenMenuIds.value?.includes(props.option.id))
 
 function labelRender(option: MenuOption) {
     if (typeof option.label === 'string') {
@@ -118,11 +208,28 @@ function labelRender(option: MenuOption) {
 
 //菜单单击事件
 function menuClick(e: MouseEvent) {
+    e.stopPropagation()
     if (disabled.value) {
         return
     }
 
     if (props.option.type === 'radio') {
+        if(props.expandTrigger === 'click'){
+            showChildrenMenu()
+        }
+        return
+    }
+    if (props.fatherOption?.type === 'radio') {
+        const mvm = menuValueMap?.get(props.fatherOption.id)
+        if (mvm && mvm.value !== menuValue.value) {
+            if(typeof mvm.value !== 'function'){
+                mvm.value = menuValue.value
+            }
+            if (props.fatherOption?.change) {
+                props.fatherOption.change(props.menuParam, menuValue.value, props.option)
+            }
+        }
+        close()
         return
     }
     if (props.option.type === 'toggle') {
@@ -136,16 +243,11 @@ function menuClick(e: MouseEvent) {
             return
         }
     }
-    if (props.fatherOption?.type === 'radio') {
-        const mvm = menuValueMap?.get(props.fatherOption.id)
-        if (mvm && mvm.value !== menuValue.value) {
-            if(typeof mvm.value !== 'function'){
-                mvm.value = menuValue.value
-            }
-            if (props.fatherOption?.change) {
-                props.fatherOption.change(props.menuParam, menuValue.value, props.option)
-            }
+    if(children.value.length > 0){
+        if(props.expandTrigger === 'click'){
+            showChildrenMenu()
         }
+        return
     }
     if (typeof props.option.handler === 'function') {
         props.option.handler(props.menuParam, menuValue.value, props.option)
@@ -153,57 +255,67 @@ function menuClick(e: MouseEvent) {
     close()
 }
 
-const toggleChecked = ref(menuValue.value ? true : false)
 function toggle(value: boolean) {
     toggleChecked.value = value
 }
 
-function showChildrenMenu() {
-    childrenVisible.value = true
+function menuItemMouseEnter() {
+    if(props.expandTrigger === 'hover'){
+        showChildrenMenu()
+    }
+}
+
+function menuItemMouseLeave() {
+    if(props.expandTrigger === 'hover'){
+        // childrenVisible.value = false
+    }
+}
+
+function showChildrenMenu(){
+    
+    visibleChildrenMenuIds.value = []
+
+    if(children.value.length > 0){
+        visibleChildrenMenuIds.value = [props.option.id]
+    }
+    
+    const fids = findFatherIds(props.option.id)
+    fids.forEach(fid => visibleChildrenMenuIds.value?.push(fid))
+
+    childrenMenuContainerStyle.value.transform = `translate(0, 0)`
+
     nextTick(() => {
         if (menuChildrenRef.value) {
-            if (props.width) {
-                let width = props.width
-                if (Number.isInteger(props.width)) {
-                    width = props.width + 'px'
-                }
-                menuChildrenRef.value.style.width = String(width)
-            }
-            if (props.maxWidth) {
-                let maxWidthTemp = props.maxWidth
-                if (Number.isInteger(props.maxWidth)) {
-                    maxWidthTemp = props.maxWidth + 'px'
-                }
-                menuChildrenRef.value.style.maxWidth = String(maxWidthTemp)
-            }
-
             const menuContainerRect = menuItemContainerRef.value!.getBoundingClientRect() as DOMRect
             const menuItemRect = menuItemRef.value!.getBoundingClientRect() as DOMRect
             const menuChildrenRect = menuChildrenRef.value.getBoundingClientRect() as DOMRect
             let x = menuContainerRect.width + 'px'
             let y = '0'
-            if (menuChildrenRect.x + menuChildrenRect.width + menuContainerRect.width > window.innerWidth) {
+            if (menuChildrenRect.right + menuChildrenRect.width > window.innerWidth) {
                 x = -menuChildrenRect.width + 'px'
             }
-            if (menuChildrenRect.y + menuChildrenRect.height > window.innerHeight) {
+            if (menuChildrenRect.bottom > window.innerHeight) {
                 y = -(children.value.length - 1) * menuItemRect.height + 'px'
             }
-            menuChildrenRef.value.style.transform = `translate(${x}, ${y})`
+            childrenMenuContainerStyle.value.transform = `translate(${x}, ${y})`
         }
     })
 }
 
-function closeChildrenMenu() {
-    // console.log('关闭了菜单')
-    childrenVisible.value = false
+function findFatherIds(id: string|number): Array<string|number>{
+    const fid = menuValueMap?.get(id)?.fatherId
+    if(fid){
+        return [fid].concat(findFatherIds(fid))
+    }
+    return []
 }
 
 </script>
 
 <template>
     <div ref="menuItemContainerRef" v-if="visible" :class="containerClass + itemClass" :style="itemStyle"
-        @click="menuClick" @mouseenter="showChildrenMenu" @mouseleave="closeChildrenMenu">
-        <div ref="menuItemRef" lt-item-data>
+        @click="menuClick">
+        <div ref="menuItemRef" lt-item-data @mouseenter="menuItemMouseEnter" @mouseleave="menuItemMouseLeave">
             <div v-if="props.fatherOption?.type === 'radio'" class="menu-item-point" :checked="radioChecked"
                 :style="{ backgroundColor: radioChecked ? 'var(--menu-text-color)' : 'inherit' }">
             </div>
@@ -216,12 +328,13 @@ function closeChildrenMenu() {
             <component v-else :is="children.length > 0 && isDefaultMenu ? moreIcon : 'div'"
                 class="menu-item-more" />
         </div>
-        <div ref="menuChildrenRef" class="menu-container" v-if="childrenVisibility" lt-item-children>
+        <div ref="menuChildrenRef" class="menu-container" v-if="childrenVisibility" lt-item-children :style="childrenMenuContainerStyle">
             <div class="menu-item-group" v-for="groupOptionChildren in children"
                 :key="groupOptionChildren.group">
                 <template v-for="optionChildren in groupOptionChildren.options" :key="optionChildren.label">
                     <LtContextmenuItem :option="optionChildren" :menuParam="menuParam" :fatherOption="option"
-                        :menu-style="props.menuStyle" :width="props.width" :max-width="props.maxWidth" />
+                        :menu-style="props.menuStyle" :width="props.width" :max-width="props.maxWidth"
+                        :expandTrigger="props.expandTrigger" />
                 </template>
             </div>
         </div>
@@ -237,6 +350,33 @@ function closeChildrenMenu() {
     background-color: var(--menu-container-bg-color);
     left: 0;
     top: var(--menu-container-children-top);
+}
+
+/* 全局滚动条样式 */
+.menu-container::-webkit-scrollbar {
+  width: 6px; /* 滚动条宽度 */
+}
+
+/* 滚动条轨道 */
+.menu-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-backgroun-color);
+  border-radius: 5px; /* 轨道圆角 */
+}
+
+/* 滚动条滑块 */
+.menu-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-backgroun-color); /* 滑块颜色 */
+  border-radius: 5px; /* 滑块圆角 */
+}
+
+/* 滑块的hover样式 */
+.menu-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-backgroun-color-hover); /* 滑块hover颜色 */
+}
+
+/* 滑块的active样式 */
+.menu-container::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-backgroun-color-hover); /* 滑块active颜色 */
 }
 
 .menu-item-group {

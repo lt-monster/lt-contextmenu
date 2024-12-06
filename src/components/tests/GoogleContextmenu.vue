@@ -27,9 +27,9 @@ const selectRadioValue = ref('none')
 const ss = ['lijiatu']
 
 const cs = ref<string[]>([])
-setTimeout(() => {
-    cs.value = ['操作1','操作2']
-}, 2000)
+for (let i = 0; i < 20; i++) {
+    cs.value.push('菜单项xxxxxxxxxxxxxxx-'+(i+1))
+}
 
 const menuOptions = ref<MenuGroupOption[]>([
     {
@@ -40,17 +40,63 @@ const menuOptions = ref<MenuGroupOption[]>([
                 icon: () => h(IconRefresh),
                 label: "刷新",
                 visible(menuParam:any){
-                    console.log('menuParam',menuParam)
                     return menuParam?.name === 'lijiatu' && ss.includes(menuParam?.name)
                 },
                 // visible: false
+            },
+            {
+                id: "2",
+                icon: () => h(IconRefresh),
+                label: "刷新222",
+                visible(menuParam:any){
+                    return menuParam?.name === 'lijiatu' && ss.includes(menuParam?.name)
+                },
+                children: [
+                    {
+                        id: '2-1',
+                        label: '测试111',
+                        children: [
+                            {
+                                id: '2-1-1',
+                                label: '测试222',
+                                children: [
+                                    {
+                                        id: '2-1-1-1',
+                                        label: '测试3333'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '2-2',
+                        label: '测试111-222',
+                    },
+                    {
+                        id: '2-3',
+                        label: '测试111-333',
+                        children: [
+                            {
+                                id: '2-3-1',
+                                label: '测试111-333-111',
+                            },
+                            {
+                                id: '2-3-2',
+                                label: '测试111-333-222',
+                            },
+                        ]
+                    },
+                ],
+                childrenStyle: {
+                    maxHeight: 200
+                }
             },
             {
                 id: "3",
                 label: '其他',
                 type: 'radio',
                 visible(menuParam:any){
-                    return menuParam?.name !== 'lijiatu'
+                    return true
                 },
                 children: () => {
                     return cs.value.map(item => {
@@ -60,32 +106,33 @@ const menuOptions = ref<MenuGroupOption[]>([
                             value: item
                         }
                     })
+                },
+                childrenStyle: {
+                    maxHeight: 200
                 }
             }
         ]
     },
     {
-        group: "2",
+        group: "4",
         options: [
             {
-                id: "2-2",
+                id: "4-2",
                 icon: () => h(IconAdd),
                 label: "添加"
             },
             {
-                id: "2-1",
+                id: "4-1",
                 icon: () => h(IconSortMode),
                 label: "排序方式",
                 type: 'radio',
                 value: 'none',
                 change(menuParam, value, itemOption) {
-                    console.log('menuParam', menuParam)
-                    console.log('value', value)
-                    console.log('itemOption', itemOption)
+                    
                 },
                 children: [
                     {
-                        id: "2-1-1",
+                        id: "4-1-1",
                         icon: () => h(IconSortAsc),
                         label: "升序",
                         value: 'asc',
@@ -94,7 +141,7 @@ const menuOptions = ref<MenuGroupOption[]>([
                         }
                     },
                     {
-                        id: "2-1-2",
+                        id: "4-1-2",
                         icon: () => h(IconSortDesc),
                         label: "降序",
                         value: 'desc',
@@ -103,7 +150,7 @@ const menuOptions = ref<MenuGroupOption[]>([
                         }
                     },
                     {
-                        id: "2-1-3",
+                        id: "4-1-3",
                         icon: () => h(IconSortNone),
                         label: "不排序",
                         value: 'none',
@@ -114,7 +161,7 @@ const menuOptions = ref<MenuGroupOption[]>([
                 ]
             },
             {
-                id: "2-3",
+                id: "4-3",
                 icon: () => h(IconToggle),
                 label: "开关",
                 type: 'toggle',
@@ -126,6 +173,13 @@ const menuOptions = ref<MenuGroupOption[]>([
         ]
     }
 ])
+
+// const menuOptions = ref<MenuOption[]>(cs.value.map(c => {
+//     return {
+//         id: c,
+//         label: c,
+//     }
+// }))
 
 function customClose(close: () => void) {
     console.log('关闭前')
@@ -143,8 +197,8 @@ defineExpose({
 </script>
 
 <template>
-    <LtContextmenu ref="tlContextmenuRef" :menu-options="menuOptions" menu-size="small" :width="180"
-        :before-close="customClose" />
+    <LtContextmenu ref="tlContextmenuRef" :menu-options="menuOptions" menu-theme="light" menu-size="small" :width="180"
+        expand-trigger="click" :before-close="customClose" :height="200" />
 </template>
 
 <style scoped></style>

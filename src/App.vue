@@ -14,8 +14,8 @@ const data = ref({
 </script>
 
 <template>
-  <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-    <div style="width: 200px;height: 200px;background-color: palevioletred;"
+  <div style="display: flex;justify-content: flex-start;align-items: center;">
+    <div style="width: 200px;height: 200px;background-color: palevioletred;margin: 100px;"
       @click.right="(e) => ltContextmenu?.open(e, data)">
       <GoogleContextmenu ref="ltContextmenu" />
     </div>

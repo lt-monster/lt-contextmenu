@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { convertMenuGroupOption, getMenuVisible } from './lt-contextmenu'
-import type { MenuCacheMap, MenuGroupOption, MenuProps, MenuValue } from './types/lt-contextmenu'
+import type { MenuCacheMap, MenuChildrenOption, MenuGroupOption, MenuOption, MenuProps, MenuValue } from './types/lt-contextmenu'
 import LtContextmenuItem from './LtContextmenuItem.vue'
-import { computed, nextTick, ref, watchEffect, type CSSProperties } from 'vue';
+import { computed, nextTick, ref, type CSSProperties } from 'vue';
 
 const menuVisible = ref(false)
 const menuRef = ref<HTMLElement>()
@@ -11,24 +11,82 @@ const props = withDefaults(defineProps<MenuProps>(), {
     menuStyle: 'google',
     menuTheme: 'light',
     menuSize: 'small',
+    expandTrigger: 'hover',
     beforeClose: (close: () => void) => {
         close()
     }
 })
 provide('menuProps', props)
+console.log('props',props)
 
 const menuOptions = computed(() => convertMenuGroupOption(props.menuOptions))
 
 const menuValueMap = new Map<string | number, MenuCacheMap>()
-menuOptions.value.forEach(g => menuValueToMapCache(g))
 provide('menuValueMap', menuValueMap)
+
+const visibleChildrenMenuIds = ref<Array<string|number>>([])
+provide('visibleChildrenMenuIds', visibleChildrenMenuIds)
+
+const width = computed<string>(() => {
+    if(props.width){
+        if(typeof props.width === 'number'){
+            return props.width+'px'
+        }
+        else if(typeof props.width === 'string'){
+            return props.width
+        }
+    }
+    return ''
+})
+provide('width',width.value)
+const maxWidth = computed<string>(() => {
+    if(props.maxWidth){
+        if(typeof props.maxWidth === 'number'){
+            return props.maxWidth+'px'
+        }
+        else if(typeof props.maxWidth === 'string'){
+            return props.maxWidth
+        }
+    }
+    return ''
+})
+provide('maxWidth',maxWidth.value)
+
+const height = computed<string>(() => {
+    if(props.height){
+        if(typeof props.height === 'number'){
+            return props.height+'px'
+        }
+        else if(typeof props.height === 'string'){
+            return props.height
+        }
+    }
+    return ''
+})
+const maxHeight = computed<string>(() => {
+    if(props.maxHeight){
+        if(typeof props.maxHeight === 'number'){
+            return props.maxHeight+'px'
+        }
+        else if(typeof props.maxHeight === 'string'){
+            return props.maxHeight
+        }
+    }
+    return ''
+})
+const containerStyle = ref<CSSProperties>({
+    width: width.value,
+    maxWidth: maxWidth.value
+})
+//判断顶级菜单是否存在子菜单,如果有则height,maxHeight无效,他们仅对当前层有效(设计缺陷)
+const childrenExistence = ref(false)
 
 const menuParam = ref()
 
 const groupClass = computed(() => {
     if (props.groupClass) {
         if (typeof props.groupClass === 'function') {
-            return 'menu-group ' + props.groupClass(menuParam)
+            return 'menu-group ' + props.groupClass(menuParam.value)
         }
         return 'menu-group ' + props.groupClass
     }
@@ -38,7 +96,7 @@ const groupClass = computed(() => {
 const groupStyle = computed<CSSProperties>(() => {
     if (props.groupStyle) {
         if (typeof props.groupStyle === 'function') {
-            return props.groupStyle(menuParam)
+            return props.groupStyle(menuParam.value)
         }
         return props.groupStyle
     }
@@ -49,17 +107,32 @@ function groupVisible(menuGroupOption: MenuGroupOption){
     return menuGroupOption.options.map(o => getMenuVisible(o, menuParam.value)).some(v => v)
 }
 
-function menuValueToMapCache(group?: MenuGroupOption) {
+function menuValueToMapCache(group?: MenuGroupOption, fatherId?: string|number) {
     group?.options.forEach(option => {
         menuValueMap.set(option.id, {
             option,
-            value: option.value
+            value: option.value,
+            fatherId: fatherId
         })
-        if (option.children && Array.isArray(option.children) && option.children.length > 0) {
-            const newGroup = convertMenuGroupOption(option.children)
-            newGroup.forEach(ng => menuValueToMapCache(ng))
+        let children:MenuChildrenOption = []
+        if(Array.isArray(option.children)){
+            children = option.children
         }
-
+        else if(typeof option.children === 'function'){
+            let value:MenuValue|undefined = undefined
+            if(typeof option.value === 'function'){
+                value = option.value(menuParam.value)
+            }
+            else{
+                value = option.value
+            }
+            children = option.children(menuParam.value, value, option)
+        }
+        if(children.length > 0){
+            childrenExistence.value = true
+        }
+        const newGroup = convertMenuGroupOption(children)
+        newGroup.forEach(ng => menuValueToMapCache(ng, option.id))
     })
 }
 
@@ -77,48 +150,49 @@ function open(event: MouseEvent | { x: number, y: number }, param?: any) {
     }
     menuParam.value = param
     menuVisible.value = true
+    menuOptions.value.forEach(g => menuValueToMapCache(g))
+    if(!childrenExistence.value){
+        if(height.value){
+            containerStyle.value.height = height.value
+        }
+        if(maxHeight.value){
+            containerStyle.value.maxHeight = maxHeight.value
+        }
+        containerStyle.value.overflow = 'auto'
+    }
     nextTick(() => {
         if (!menuRef.value) {
             return
         }
-        if (props.width) {
-            let width = props.width
-            if (Number.isInteger(props.width)) {
-                width = props.width + 'px'
-            }
-            menuRef.value.style.width = String(width)
-        }
-        if (props.maxWidth) {
-            let maxWidth = props.maxWidth
-            if (Number.isInteger(props.maxWidth)) {
-                maxWidth = props.maxWidth + 'px'
-            }
-            menuRef.value.style.maxWidth = String(maxWidth)
-        }
 
         const rect = menuRef.value.getBoundingClientRect() as DOMRect
         if (y + rect.height > window.innerHeight) {
-            menuRef.value.style.top = (y - rect.height > 0 ? y - rect.height : 0) + 'px'
+            containerStyle.value.top = (y - rect.height > 0 ? y - rect.height : 0) + 'px'
         } else {
-            menuRef.value.style.top = y + 'px'
+            containerStyle.value.top = y + 'px'
         }
 
         if (x + rect.width > window.innerWidth) {
-            menuRef.value.style.left = (x - rect.width) + 'px'
+            containerStyle.value.left = (x - rect.width) + 'px'
         } else {
-            menuRef.value.style.left = x + 'px'
+            containerStyle.value.left = x + 'px'
         }
 
-        window.addEventListener('wheel', close)
+        window.addEventListener('wheel', closeByWheel)
+        document.addEventListener('click', closeWithBlank, true)
+        document.addEventListener('contextmenu', closeWithBlank, true)
     })
 }
 
 provide('close', close)
 function close() {
-    menuVisible.value = false
-
     //移除事件监听
-    window.removeEventListener('wheel', close)
+    window.removeEventListener('wheel', closeByWheel)
+    document.removeEventListener('click', closeWithBlank, true)
+    document.removeEventListener('contextmenu', closeWithBlank, true)
+
+    visibleChildrenMenuIds.value = []
+    menuVisible.value = false
 }
 
 function closeWithBlank(e: MouseEvent) {
@@ -127,18 +201,11 @@ function closeWithBlank(e: MouseEvent) {
     }
 }
 
-watchEffect((onInvalidate) => {
-    if(typeof window !== 'undefined'){
-        document.addEventListener('click', closeWithBlank, true)
-        document.addEventListener('contextmenu', closeWithBlank, true)
+function closeByWheel(e: WheelEvent){
+    if (menuVisible.value && !menuRef.value?.contains(e.target as Node)) {
+        props.beforeClose(close)
     }
-    onInvalidate(() => {
-        if(typeof window !== 'undefined'){
-            document.removeEventListener('click', closeWithBlank, true)
-            document.removeEventListener('contextmenu', closeWithBlank, true)
-        }
-    });
-})
+}
 
 defineExpose({
     open,
@@ -158,14 +225,14 @@ defineExpose({
 <template>
     <Teleport to="body">
         <div ref="menuRef" v-if="menuVisible && menuOptions.length > 0" class="menu-container" :menuStyle="menuStyle"
-            :menuTheme="menuTheme" :menuSize="menuSize">
+            :menuTheme="menuTheme" :menuSize="menuSize" :style="containerStyle">
             <slot name="header" :menuParam="menuParam"></slot>
             <template v-for="groupOption in menuOptions" :key="groupOption.group">
                 <div v-if="groupVisible(groupOption)" :class="groupClass" :style="groupStyle">
                     <template v-for="option in groupOption.options" :key="option.label">
                         <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
                             :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
-                            :item-style="props.itemStyle" />
+                            :item-style="props.itemStyle" :expandTrigger="props.expandTrigger" />
                     </template>
                 </div>
             </template>
@@ -187,6 +254,33 @@ defineExpose({
     color: var(--menu-text-color);
     font-size: var(--menu-container-fontsize);
     background-color: var(--menu-container-bg-color);
+}
+
+/* 全局滚动条样式 */
+.menu-container::-webkit-scrollbar {
+  width: 6px; /* 滚动条宽度 */
+}
+
+/* 滚动条轨道 */
+.menu-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-backgroun-color);
+  border-radius: 5px; /* 轨道圆角 */
+}
+
+/* 滚动条滑块 */
+.menu-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-backgroun-color); /* 滑块颜色 */
+  border-radius: 5px; /* 滑块圆角 */
+}
+
+/* 滑块的hover样式 */
+.menu-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-backgroun-color-hover); /* 滑块hover颜色 */
+}
+
+/* 滑块的active样式 */
+.menu-container::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-backgroun-color-hover); /* 滑块active颜色 */
 }
 
 .menu-group {
