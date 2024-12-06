@@ -3,7 +3,7 @@
 
 一款vue3开发的右键菜单组件
 
-[![Nuget](https://img.shields.io/badge/version-1.3.15-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
+[![Nuget](https://img.shields.io/badge/version-1.4.0-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
 
 ## 🚀 安装
 
@@ -63,6 +63,8 @@ const menuOptions = ref<MenuGroupOption[]>([
 | **menuSize** | 菜单大小 | 'normal' \| 'small' \| 'large' | ⬜ | 'small' |
 | **width** | 菜单固定宽度, 不设置则动态宽度 | number\|string | ⬜ | 无 |
 | **maxWidth** | 菜单最大宽度 | number\|string | ⬜ | 无 |
+| **height** | 菜单固定高度, 不设置则动态高度, 仅对顶级菜单有效 | number\|string | ⬜ | 无 |
+| **maxHeight** | 菜单最大高度, 仅对顶级菜单有效 | number\|string | ⬜ | 无 |
 | **groupClass** | 菜单组的class | string | ⬜ | 无 |
 | **groupStyle** | 菜单组的style | CSSProperties | ⬜ | 无 |
 | **itemClass** | 菜单项的class | string | ⬜ | 无 |
@@ -90,6 +92,8 @@ type MenuOption = {
     handler?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
     //子菜单, MenuChildrenOption=MenuGenericOption | ((menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => MenuGenericOption)
     children?: MenuChildrenOption
+    //子菜单自定义宽高, MenuChildrenStyle={ width?: string | number,maxWidth?: string | number,height?: string | number,maxHeight?: string | number }
+    childrenStyle?: MenuChildrenStyle
     //其类型为'radio'、'toggle'时改变值会执行
     change?: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => void
 }
