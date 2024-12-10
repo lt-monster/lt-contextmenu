@@ -15,6 +15,8 @@ const visibleChildrenMenuIds = toRef(inject<Array<string|number>>('visibleChildr
 
 const width = inject<string>('width')
 const maxWidth = inject<string>('maxWidth')
+const height = inject<string>('width')
+const maxHeight = inject<string>('maxWidth')
 const childrenWidth = computed(() => {
     if(typeof props.option.childrenStyle?.width === 'number'){
         return props.option.childrenStyle.width+'px'
@@ -33,7 +35,7 @@ const childrenMaxWidth = computed(() => {
     }
     return ''
 })
-const height = computed(() => {
+const childrenHeight = computed(() => {
     if(typeof props.option.childrenStyle?.height === 'number'){
         return props.option.childrenStyle.height+'px'
     }
@@ -42,7 +44,7 @@ const height = computed(() => {
     }
     return ''
 })
-const maxHeight = computed(() => {
+const childrenMaxHeight = computed(() => {
     if(typeof props.option.childrenStyle?.maxHeight === 'number'){
         return props.option.childrenStyle.maxHeight+'px'
     }
@@ -172,7 +174,7 @@ const itemStyle = computed<CSSProperties>(() => {
 
 const childrenMenuContainerStyle = ref<CSSProperties>({
     width: width,
-    maxWidth: maxWidth
+    maxWidth: maxWidth,
 })
 if(childrenWidth.value){
     childrenMenuContainerStyle.value.width = childrenWidth.value
@@ -181,11 +183,17 @@ if(childrenMaxWidth.value){
     childrenMenuContainerStyle.value.maxWidth = childrenMaxWidth.value
 }
 if(!grandsonExistence.value){
-    if(height.value){
-        childrenMenuContainerStyle.value.height = height.value
+    if(height){
+        childrenMenuContainerStyle.value.height = height
     }
-    if(maxHeight.value){
-        childrenMenuContainerStyle.value.maxHeight = maxHeight.value
+    if(childrenHeight.value){
+        childrenMenuContainerStyle.value.height = childrenHeight.value
+    }
+    if(maxHeight){
+        childrenMenuContainerStyle.value.maxHeight = maxHeight
+    }
+    if(childrenMaxHeight.value){
+        childrenMenuContainerStyle.value.maxHeight = childrenMaxHeight.value
     }
     childrenMenuContainerStyle.value.overflowY = 'auto'
 }

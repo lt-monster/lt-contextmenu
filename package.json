@@ -1,6 +1,6 @@
 {
   "name": "lt-contextmenu",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "一个基于Vue3的右键菜单组件",
   "keywords": [
     "contextmenu menu"

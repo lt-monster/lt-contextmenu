@@ -38,7 +38,6 @@ const width = computed<string>(() => {
     }
     return ''
 })
-provide('width',width.value)
 const maxWidth = computed<string>(() => {
     if(props.maxWidth){
         if(typeof props.maxWidth === 'number'){
@@ -50,8 +49,6 @@ const maxWidth = computed<string>(() => {
     }
     return ''
 })
-provide('maxWidth',maxWidth.value)
-
 const height = computed<string>(() => {
     if(props.height){
         if(typeof props.height === 'number'){
@@ -74,6 +71,11 @@ const maxHeight = computed<string>(() => {
     }
     return ''
 })
+provide('width',width.value)
+provide('maxWidth',maxWidth.value)
+provide('height',height.value)
+provide('maxHeight',maxHeight.value)
+
 const containerStyle = ref<CSSProperties>({
     width: width.value,
     maxWidth: maxWidth.value
