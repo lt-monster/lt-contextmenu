@@ -7,7 +7,7 @@
 
 ## 🚀 安装
 
-### NPM 安装（推荐）
+### NPM/YARN/PNPM（推荐） 安装
 
 ```bash
 $ npm i -S lt-contextmenu # yarn add lt-contextmenu # pnpm add lt-contextmenu
