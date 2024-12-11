@@ -103,7 +103,10 @@ const menuOptions = ref<MenuGroupOption[]>([
                         return {
                             id: item,
                             label: item,
-                            value: item
+                            value: item,
+                            handler: (menuParam?: any, value?: MenuValue, itemOption?: MenuOption) => {
+                                console.log('clicked...'+item)
+                            }
                         }
                     })
                 },
@@ -198,7 +201,7 @@ defineExpose({
 
 <template>
     <LtContextmenu ref="tlContextmenuRef" :menu-options="menuOptions" menu-theme="light" menu-size="small" :width="180"
-        expand-trigger="click" :before-close="customClose" :height="200" />
+        expand-trigger="hover" :before-close="customClose" :height="200" />
 </template>
 
 <style scoped></style>

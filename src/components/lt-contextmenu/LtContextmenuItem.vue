@@ -15,8 +15,8 @@ const visibleChildrenMenuIds = toRef(inject<Array<string|number>>('visibleChildr
 
 const width = inject<string>('width')
 const maxWidth = inject<string>('maxWidth')
-const height = inject<string>('width')
-const maxHeight = inject<string>('maxWidth')
+const height = inject<string>('height')
+const maxHeight = inject<string>('maxHeight')
 const childrenWidth = computed(() => {
     if(typeof props.option.childrenStyle?.width === 'number'){
         return props.option.childrenStyle.width+'px'
@@ -237,8 +237,6 @@ function menuClick(e: MouseEvent) {
                 props.fatherOption.change(props.menuParam, menuValue.value, props.option)
             }
         }
-        close()
-        return
     }
     if (props.option.type === 'toggle') {
         const target = e.target as HTMLElement
