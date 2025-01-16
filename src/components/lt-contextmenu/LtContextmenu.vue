@@ -17,7 +17,6 @@ const props = withDefaults(defineProps<MenuProps>(), {
     }
 })
 provide('menuProps', props)
-console.log('props',props)
 
 const menuOptions = computed(() => convertMenuGroupOption(props.menuOptions))
 
@@ -226,20 +225,41 @@ defineExpose({
 
 <template>
     <Teleport to="body">
-        <div ref="menuRef" v-if="menuVisible && menuOptions.length > 0" class="menu-container" :menuStyle="menuStyle"
-            :menuTheme="menuTheme" :menuSize="menuSize" :style="containerStyle">
-            <slot name="header" :menuParam="menuParam"></slot>
-            <template v-for="groupOption in menuOptions" :key="groupOption.group">
-                <div v-if="groupVisible(groupOption)" :class="groupClass" :style="groupStyle">
-                    <template v-for="option in groupOption.options" :key="option.label">
-                        <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
-                            :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
-                            :item-style="props.itemStyle" :expandTrigger="props.expandTrigger" />
+        <template v-if="overlay?.enable">
+            <div style="width: 100vw;height: 100vh;position: fixed;z-index: 10000;top: 0;left: 0;" :style="{ zIndex: overlay?.zIndex??10000 }"
+                v-if="menuVisible && menuOptions.length > 0">
+                <div ref="menuRef" class="menu-container" :menuStyle="menuStyle"
+                    :menuTheme="menuTheme" :menuSize="menuSize" :style="containerStyle">
+                    <slot name="header" :menuParam="menuParam"></slot>
+                    <template v-for="groupOption in menuOptions" :key="groupOption.group">
+                        <div v-if="groupVisible(groupOption)" :class="groupClass" :style="groupStyle">
+                            <template v-for="option in groupOption.options" :key="option.label">
+                                <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
+                                    :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
+                                    :item-style="props.itemStyle" :expandTrigger="props.expandTrigger" />
+                            </template>
+                        </div>
                     </template>
+                    <slot name="footer" :menuParam="menuParam"></slot>
                 </div>
-            </template>
-            <slot name="footer" :menuParam="menuParam"></slot>
-        </div>
+            </div>
+        </template>
+        <template v-else>
+            <div ref="menuRef" class="menu-container" :menuStyle="menuStyle"
+                :menuTheme="menuTheme" :menuSize="menuSize" :style="containerStyle">
+                <slot name="header" :menuParam="menuParam"></slot>
+                <template v-for="groupOption in menuOptions" :key="groupOption.group">
+                    <div v-if="groupVisible(groupOption)" :class="groupClass" :style="groupStyle">
+                        <template v-for="option in groupOption.options" :key="option.label">
+                            <LtContextmenuItem :option="option" :menu-param="menuParam" :menu-style="props.menuStyle"
+                                :width="props.width" :max-width="props.maxWidth" :item-class="props.itemClass"
+                                :item-style="props.itemStyle" :expandTrigger="props.expandTrigger" />
+                        </template>
+                    </div>
+                </template>
+                <slot name="footer" :menuParam="menuParam"></slot>
+            </div>
+        </template>
     </Teleport>
 </template>
 

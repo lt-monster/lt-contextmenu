@@ -14,6 +14,10 @@ export type MenuProps = {
     itemClass?: string | ((menuParam?: any, itemOption?: MenuOption) => string)
     itemStyle?: CSSProperties | ((menuParam?: any, itemOption?: MenuOption) => CSSProperties)
     expandTrigger?: 'hover'|'click'
+    overlay?: {
+        enable: boolean
+        zIndex?: number
+    }
 } & MenuEvents
 
 type MenuEvents = {
