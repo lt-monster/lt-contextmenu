@@ -8,15 +8,14 @@ const ltContextmenu = ref<InstanceType<typeof GoogleContextmenu>>()
 
 const data = ref({
   name: 'lijiatu',
-  children: ['1','2']
+  children: ['1', '2']
 })
 
 </script>
 
 <template>
   <div style="display: flex;justify-content: flex-start;align-items: center;">
-    <div style="width: 200px;height: 200px;background-color: palevioletred;margin: 100px;"
-      @click.right="(e) => ltContextmenu?.open(e, data)">
+    <div class="div-main" @click.right="(e) => ltContextmenu?.open(e, data)">
       <GoogleContextmenu ref="ltContextmenu" />
     </div>
     <!-- <Toggle />
@@ -47,5 +46,15 @@ const data = ref({
   position: absolute;
   top: .1em;
   left: .1em;
+}
+
+.div-main {
+  width: 200px;
+  height: 200px;
+  background-color: palevioletred;
+  margin: 100px;
+}
+.div-main:hover{
+  background-color: skyblue;
 }
 </style>

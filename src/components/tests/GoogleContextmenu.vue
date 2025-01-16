@@ -201,7 +201,7 @@ defineExpose({
 
 <template>
     <LtContextmenu ref="tlContextmenuRef" :menu-options="menuOptions" menu-theme="light" menu-size="small" :width="180"
-        expand-trigger="hover" :before-close="customClose" :height="200" />
+        expand-trigger="hover" :before-close="customClose" :height="200" :overlay="{ enable: true }" />
 </template>
 
 <style scoped></style>
