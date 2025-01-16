@@ -3,7 +3,7 @@
 
 一款vue3开发的右键菜单组件
 
-[![Nuget](https://img.shields.io/badge/version-1.4.3-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
+[![Nuget](https://img.shields.io/badge/version-1.4.4-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
 
 ## 🚀 安装
 
@@ -69,6 +69,8 @@ const menuOptions = ref<MenuGroupOption[]>([
 | **groupStyle** | 菜单组的style | CSSProperties | ⬜ | 无 |
 | **itemClass** | 菜单项的class | string | ⬜ | 无 |
 | **itemStyle** | 菜单项的style | CSSProperties | ⬜ | 无 |
+| **expandTrigger** | 子菜单触发方式 | 'hover' \| 'click' | ⬜ | 'hover' |
+| **overlay** | 遮罩层配置 | { enable: boolean, zIndex?: number } | ⬜ | 无 |
 | **beforeClose** | 关闭前的回调，可终止菜单的关闭 | (close: () => void) => void | ⬜ | 无 |
 
 ### 类型说明
