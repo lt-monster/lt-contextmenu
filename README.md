@@ -1,9 +1,47 @@
-![image](./public/logo.svg)
-# lt-contextmenu
+<div align="center">
+  <img src="./public/logo.svg" alt="image" />
+  <h1>lt-contextmenu</h1>
+  <p>
+    <strong>简体中文</strong> | <a href="./README.en.md">English</a>
+  </p>
+  <p>一款vue3开发的右键菜单组件</p>
+  <p>
+    <a href="https://github.com/lt-monster/lt-contextmenu">
+      <img src="https://img.shields.io/badge/version-1.4.4-1afa29" alt="Version" />
+    </a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="https://vuejs.org/">
+      <img src="https://img.shields.io/badge/vue-3.x-brightgreen.svg" alt="Vue" />
+    </a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="https://www.typescriptlang.org/">
+      <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?logo=typescript&logoColor=white" alt="TypeScript" />
+    </a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="https://www.npmjs.com/package/lt-contextmenu">
+      <img src="https://img.shields.io/npm/dm/lt-contextmenu" alt="Downloads" />
+    </a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE">
+      <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
+    </a>
+  </p>
+</div>
 
-一款vue3开发的右键菜单组件
+<p align="center">
+  <a href="https://lt-contextmenu-doc.vercel.app/">
+    <img src="https://img.shields.io/badge/Document-Online_Demo-blue" alt="Online Demo">
+  </a>
+</p>
 
-[![Nuget](https://img.shields.io/badge/version-1.4.4-1afa29)](https://github.com/lt-monster/lt-contextmenu) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)
+## ✨ 特性
+
+- 🎨 **多种主题风格**：内置 Google 和 Edge 风格，支持 Light/Dark 主题。
+- 📂 **多级子菜单**：支持无限级嵌套的子菜单。
+- 🔧 **高度可配置**：支持自定义图标、禁用状态、可见性、快捷键提示等。
+- 🧩 **灵活的 API**：提供丰富的事件回调和手动控制方法。
+- 📱 **响应式设计**：自适应宽度和高度。
+- 📘 **TypeScript 支持**：完整的类型定义，开发体验更佳。
 
 ## 🚀 安装
 
@@ -109,7 +147,7 @@ type MenuGroupOption = {
 ```
 ### 函数参数说明
 | 参数 | 说明 |
-| --- | --- |
+| :--- | :--- |
 | **menuParam** | 菜单项传递的参数 |
 | **value** | 菜单类型为radio时选中的值 |
 | **itemOption** | 菜单项本身 |
