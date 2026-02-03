@@ -4,35 +4,11 @@
   <p>
     <a href="./README.md">简体中文</a> | <strong>English</strong>
   </p>
-  <p>A context menu component based on Vue 3</p>
-  <p>
-    <a href="https://github.com/lt-monster/lt-contextmenu">
-      <img src="https://img.shields.io/badge/version-1.4.4-1afa29" alt="Version" />
-    </a>
-    &nbsp;&nbsp;&nbsp;
-    <a href="https://vuejs.org/">
-      <img src="https://img.shields.io/badge/vue-3.x-brightgreen.svg" alt="Vue" />
-    </a>
-    &nbsp;&nbsp;&nbsp;
-    <a href="https://www.typescriptlang.org/">
-      <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?logo=typescript&logoColor=white" alt="TypeScript" />
-    </a>
-    &nbsp;&nbsp;&nbsp;
-    <a href="https://www.npmjs.com/package/lt-contextmenu">
-      <img src="https://img.shields.io/npm/dm/lt-contextmenu" alt="Downloads" />
-    </a>
-    &nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE">
-      <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
-    </a>
-  </p>
-</div>
+  <p>A powerful context menu component based on Vue 3, featuring multi-level nesting, custom themes, and rich animations for a native-like experience.</p>
 
-<p align="center">
-  <a href="https://lt-contextmenu-doc.vercel.app/">
-    <img src="https://img.shields.io/badge/Document-Online_Demo-blue" alt="Online Demo">
-  </a>
-</p>
+  [![Version](https://img.shields.io/badge/version-1.4.4-1afa29)](https://github.com/lt-monster/lt-contextmenu)&nbsp;&nbsp;&nbsp;[![Vue](https://img.shields.io/badge/vue-3.x-brightgreen.svg)](https://vuejs.org/)&nbsp;&nbsp;&nbsp;[![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)&nbsp;&nbsp;&nbsp;[![Downloads](https://img.shields.io/npm/dm/lt-contextmenu)](https://www.npmjs.com/package/lt-contextmenu)&nbsp;&nbsp;&nbsp;[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lt-monster/lt-contextmenu/blob/main/LICENSE)&nbsp;&nbsp;&nbsp;[![Online Demo](https://img.shields.io/badge/Document-Online_Demo-blue)](https://lt-contextmenu-doc.vercel.app/)
+
+</div>
 
 ## ✨ Features
 
