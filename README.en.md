@@ -21,7 +21,7 @@
 
 ## 🚀 Installation
 
-### NPM/YARN/PNPM (Recommended)
+### 📦 NPM/YARN/PNPM (Recommended)
 
 ```bash
 $ npm i -S lt-contextmenu # yarn add lt-contextmenu # pnpm add lt-contextmenu
@@ -68,7 +68,7 @@ const menuOptions = ref<MenuGroupOption[]>([
 </template>
 ```
 
-## Configuration
+## ⚙️ Configuration
 | Parameter | Description | Type | Required | Default |
 | :--- | :--- | :--- | :---: | :---: |
 | **menuOptions** | Core configuration options | `Array<MenuOption\|MenuGroupOption>` | ✅ | - |
@@ -121,14 +121,14 @@ type MenuGroupOption = {
     options: MenuOption[]
 }
 ```
-### Function Parameters
+### 📋 Function Parameters
 | Parameter | Description |
 | :--- | :--- |
 | **menuParam** | Parameters passed to the menu item |
 | **value** | Selected value when menu type is radio |
 | **itemOption** | The menu item option itself |
 
-## Exposes
+## 📤 Exposes
 ```javascript
 {
     // Open menu

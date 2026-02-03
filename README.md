@@ -21,7 +21,7 @@
 
 ## 🚀 安装
 
-### NPM/YARN/PNPM（推荐） 安装
+### 📦 NPM/YARN/PNPM（推荐） 安装
 
 ```bash
 $ npm i -S lt-contextmenu # yarn add lt-contextmenu # pnpm add lt-contextmenu
@@ -68,7 +68,7 @@ const menuOptions = ref<MenuGroupOption[]>([
 </template>
 ```
 
-## 配置项
+## ⚙️ 配置项
 | 参数 | 说明 | 类型 | 必填 | 默认值 |
 | --- | --- | --- | --- | --- |
 | **menuOptions** | 核心配置项 | Array<MenuOption\|MenuGroupOption> | ✅ | 无 |
@@ -87,7 +87,7 @@ const menuOptions = ref<MenuGroupOption[]>([
 | **overlay** | 遮罩层配置 | { enable: boolean, zIndex?: number } | ⬜ | 无 |
 | **beforeClose** | 关闭前的回调，可终止菜单的关闭 | (close: () => void) => void | ⬜ | 无 |
 
-### 类型说明
+### 📝 类型说明
 ```typescript
 type MenuOption = {
     //必填项, 唯一id
@@ -121,14 +121,14 @@ type MenuGroupOption = {
     options: MenuOption[]
 }
 ```
-### 函数参数说明
+### 📋 函数参数说明
 | 参数 | 说明 |
 | :--- | :--- |
 | **menuParam** | 菜单项传递的参数 |
 | **value** | 菜单类型为radio时选中的值 |
 | **itemOption** | 菜单项本身 |
 
-## Exposes
+## 📤 Exposes
 ```javascript
 {
     //打开菜单
